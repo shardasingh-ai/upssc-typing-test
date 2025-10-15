@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>UPSSSC Junior Assistant Typing Test (EN ➜ HI)</title>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  :root{
+    --bg:#f3f5f7; --card:#ffffff; --muted:#6b7280; --text:#0f172a;
+    --accent:#22c55e; --accent-700:#16a34a; --danger:#ef4444; --warning:#f59e0b;
+    --ring:0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(2,6,23,.10);
+    --soft:0 1px 2px rgba(2,6,23,.05); --radius:14px;
+    --cur-yellow:#fef08a; --err-red:#b91c1c;
+
+    /* UPS-styled header colors */
+    --ups-blue:#0a78ff; --ups-black:#0b0b0b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font:14px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; color:var(--text); background:var(--bg)}
+  .page{max-width:980px; margin:18px auto 28px; padding:0 16px}
+
+  /* ===== Masthead (screenshot style) ===== */
+  .masthead { box-shadow: var(--ring); border-radius: 8px; overflow: hidden; }
+  .titlebar{ background: var(--ups-blue); color:#fff; padding: 10px 18px; text-align:center; }
+  .titlebar .titletext{ font-size:22px; font-weight:800; letter-spacing:.2px; }
+  .brandbar{ display:flex; align-items:center; justify-content:space-between; background:var(--ups-black); color:#fff; padding:8px 12px; }
+  .brandleft{ font-weight:800; font-size:14px; }
+  .brandright{ display:flex; align-items:center; gap:18px; }
+  .timerbox{ font-size:20px; font-weight:800; white-space:nowrap; }
+  #timerEl{ color:#fff !important; background:transparent !important; font-weight:800; padding:0; border-radius:0; box-shadow:none; min-width:auto; }
+  .userbox{ display:flex; align-items:center; gap:10px; }
+  .avatar{ width:56px; height:56px; border-radius:4px; border:1px solid rgba(255,255,255,.35); background:#fff; object-fit:cover; }
+  .username{ font-weight:900; letter-spacing:.4px; }
+  .infobar{ background:var(--ups-blue); color:#fff; display:flex; gap:42px; padding:10px 18px; font-size:18px; font-weight:700; }
+
+  /* Controls toolbar */
+  .controls.toolbar{ margin-top:10px; background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; box-shadow: var(--soft); }
+  .toolbar-label{ color:#0b1220; font-weight:800; margin-left:12px; }
+  .toolbar-select{ margin-right:8px; padding:6px 10px; border-radius:8px; border:1px solid #d1d5db; background:#fff; }
+  .right{margin-left:auto; display:flex; align-items:center; gap:10px}
+  .btn{background:#0f172a; color:#fff; border:none; padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer}
+  .btn[disabled]{opacity:.6; cursor:not-allowed}
+  .btn:hover{background:#1f2937}
+
+  /* Sections */
+  .section{background:var(--card); border-radius:var(--radius); box-shadow:var(--ring); padding:18px; margin-top:18px}
+  .section h3{margin:0 0 10px; font-size:12px; color:#6b7280; text-transform:uppercase; letter-spacing:.14em}
+  .scroll{max-height:210px; overflow:auto; border:1px solid #e5e7eb; border-radius:12px; padding:16px; background:#fff}
+  .inputbox{min-height:160px; overflow:auto; border:1px solid #e5e7eb; border-radius:12px; padding:16px; background:#f8fafc}
+
+  /* Typing visuals */
+  #textDisplay span.ok{ color:#6b7280; }
+  #textDisplay span.err{ color:var(--err-red); }
+  #textDisplay span.cur{ background:var(--cur-yellow); color:#111827; padding:2px 3px; border-radius:4px }
+
+  .grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px}
+  .grid-3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px}
+  .stat{border:1px solid #e5e7eb; border-radius:14px; padding:14px 16px; background:#fff}
+  .stat small{display:block; color:#6b7280; font-weight:700; text-transform:uppercase; letter-spacing:.12em}
+  .value{font-size:20px; font-weight:800; margin-top:6px}
+  .value .u{font-size:11px; color:#6b7280; font-weight:700; margin-left:4px}
+  .final{margin-top:12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .pill-fail{background:#fee2e2; color:#991b1b; border:1px solid #fecaca; font-weight:900; letter-spacing:.08em; padding:10px 18px; border-radius:12px}
+  .pill-pass{background:#dcfce7; color:#065f46; border:1px solid #bbf7d0; font-weight:900; letter-spacing:.08em; padding:10px 18px; border-radius:12px}
+  .note{color:#6b7280}
+  .mini-note{color:#991b1b; font-weight:700; font-size:12px; margin-top:6px}
+  .hidden{display:none}
+
+  /* Toast */
+  #toastWrap{ display:none; margin-top:12px; }
+  #toast{
+    margin:0 auto; max-width:820px; padding:12px 16px; border-radius:10px;
+    background:#fee2e2; color:#7f1d1d; border:1px solid #fecaca;
+    font-weight:800; text-align:center; box-shadow:var(--ring);
+    opacity:0; transition:opacity .25s ease;
+  }
+  #toastWrap.show{ display:block; }
+  #toastWrap.show #toast{ opacity:1; }
+
+  /* Modal */
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(15,23,42,.55);
+    display:none; align-items:center; justify-content:center; z-index:50;
+  }
+  .modal{background:#fff; width:min(760px,calc(100% - 24px)); border-radius:16px; box-shadow:var(--ring); padding:18px;}
+  .modal h2{margin:0 0 10px; font-size:18px; font-weight:800}
+  .modal .body{max-height:52vh; overflow:auto; border:1px solid #e5e7eb; border-radius:10px; padding:12px; background:#f8fafc;}
+  .modal .body ol{margin:0; padding-left:20px;}
+  .modal .body li{margin:6px 0;}
+  .modal .actions{display:flex; justify-content:flex-end; gap:10px; margin-top:12px}
+  .modal .actions .btn-primary{background:var(--accent); color:#fff; border:none}
+  .modal .actions .btn-primary:hover{background:var(--accent-700)}
+  .modal-backdrop.show{display:flex}
+
+  /* Comparison */
+  .cmp-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  .cmp-box{border:1px solid #e5e7eb; border-radius:12px; padding:12px; background:#fff; max-height:240px; overflow:auto;}
+  .w{padding:1px 2px; border-radius:3px}
+  .w.ok{color:#6b7280}
+  .w.err{color:#fff; background:#ef4444}
+  .w.miss{color:#111827; background:#fbbf24}
+  .w.extra{color:#fff; background:#ef4444}
+  .legend{display:flex; gap:10px; flex-wrap:wrap; font-size:12px; color:#6b7280}
+  .legend .sw{display:inline-flex; align-items:center; gap:6px}
+  .sw .chip{display:inline-block; width:14px; height:14px; border-radius:3px}
+  .chip.ok{background:#9ca3af}
+  .chip.err{background:#ef4444}
+  .chip.miss{background:#fbbf24}
+  .chip.extra{background:#ef4444}
+  @media (max-width:920px){.grid-3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="page">
+    <!-- Masthead -->
+    <header class="masthead">
+      <div class="titlebar">
+        <div class="titletext" id="testTitle">Typing Test Id 22536 - New Paradigms of Urbanism in Himalaya</div>
+      </div>
+      <div class="brandbar">
+        <div class="brandleft">UPSSSC Assistants English Typing Test</div>
+        <div class="brandright">
+          <div class="timerbox">Time left:- <span id="timerEl">5:00</span></div>
+          <div class="userbox">
+            <img class="avatar" src="https://i.imgur.com/1X4Qq2v.png" alt="avatar">
+            <div class="username" id="userName">ANKUR</div>
+          </div>
+        </div>
+      </div>
+      <div class="infobar">
+        <div>Keyboard Layout: <strong>QWERTY</strong></div>
+        <div>Language: <strong id="infoLang">English</strong></div>
+      </div>
+    </header>
+
+    <!-- Controls toolbar -->
+    <div class="controls toolbar">
+      <div class="left">
+        <span id="stageLabel" style="font-weight:800">Stage: <u>English</u> → Hindi</span>
+
+        <label id="passageLabel" class="toolbar-label">Passage:</label>
+        <select id="passageSet" class="toolbar-select"></select>
+
+        <label id="fontLabel" class="toolbar-label hidden">Hindi Font:</label>
+        <select id="hindiFont" class="toolbar-select hidden">
+          <option value="Mangal" selected>Mangal (Inscript)</option>
+          <option value="Kruti Dev 010">Kruti Dev 010</option>
+        </select>
+      </div>
+
+      <div class="right">
+        <button id="startBtn" class="btn" disabled>Loading…</button>
+        <button id="submitBtn" class="btn hidden">Submit</button>
+        <button id="resetBtn" class="btn">Reset</button>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toastWrap"><div id="toast">⚠️ CTRL/CMD or Paste not allowed</div></div>
+
+    <!-- Reference Text -->
+    <section class="section">
+      <h3>Reference Text</h3>
+      <div id="textDisplay" class="scroll">Select a passage and click “Start”.</div>
+    </section>
+
+    <!-- Typing Area -->
+    <section class="section">
+      <h3>Your Typing Area</h3>
+      <div class="inputbox" id="inputWrapper">
+        <textarea id="inputArea" placeholder="Start typing here..." disabled
+          autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false"
+          style="width:100%; height:160px; border:1px solid #e5e7eb; border-radius:12px; padding:12px; background:#fff; font-size:14px; line-height:1.6;"></textarea>
+      </div>
+      <small class="note">Backspace/Delete/Cut are limited to the <b>current word and the immediate previous word</b>.</small>
+    </section>
+
+    <!-- Results -->
+    <section class="section">
+      <h3>Test Results</h3>
+
+      <div id="bothResults" class="hidden">
+        <div class="grid-3">
+          <!-- EN Panel -->
+          <div class="stat">
+            <small>ENGLISH</small>
+            <div class="value" id="badgeEN" style="margin-bottom:8px;">EN: —</div>
+            <div class="grid" style="gap:8px">
+              <div class="stat"><small>Total Keystrokes</small><div id="enKeys" class="value">0</div></div>
+              <div class="stat"><small>Total Words</small><div id="enWords" class="value">0</div></div>
+              <div class="stat"><small>Total Wrong Words</small><div id="enWrong" class="value">0</div></div>
+              <div class="stat"><small>Penalty Words</small><div id="enPenalty" class="value" style="color:var(--warning)">0</div></div>
+              <div class="stat"><small>Net Typing Speed</small><div id="enNet" class="value">0.00<span class="u"> WPM</span></div></div>
+            </div>
+            <div id="enNote" class="mini-note hidden"></div>
+          </div>
+
+          <!-- HI Panel -->
+          <div class="stat">
+            <small>HINDI</small>
+            <div class="value" id="badgeHI" style="margin-bottom:8px;">HI: —</div>
+            <div class="grid" style="gap:8px">
+              <div class="stat"><small>Total Keystrokes</small><div id="hiKeys" class="value">0</div></div>
+              <div class="stat"><small>Total Words</small><div id="hiWords" class="value">0</div></div>
+              <div class="stat"><small>Total Wrong Words</small><div id="hiWrong" class="value">0</div></div>
+              <div class="stat"><small>Penalty Words</small><div id="hiPenalty" class="value" style="color:var(--warning)">0</div></div>
+              <div class="stat"><small>Net Typing Speed</small><div id="hiNet" class="value">0.00<span class="u"> WPM</span></div></div>
+            </div>
+            <div id="hiNote" class="mini-note hidden"></div>
+          </div>
+
+          <!-- Overall -->
+          <div class="stat">
+            <small>OVERALL</small>
+            <div id="badgeOverall" class="value pill-fail" style="display:inline-block; padding:8px 14px; border-radius:10px; margin-top:8px;">OVERALL: —</div>
+            <p class="note" style="margin-top:10px">Both languages must meet minimum word count and net WPM.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="preResultsNote" class="note">Results appear after <b>both</b> English and Hindi are submitted.</div>
+    </section>
+
+    <!-- Comparison -->
+    <section id="comparisonSection" class="section hidden">
+      <h3>Detailed Comparison</h3>
+      <div class="legend" style="margin-bottom:10px">
+        <span class="sw"><span class="chip ok"></span> Correct</span>
+        <span class="sw"><span class="chip err"></span> Mismatch / Extra</span>
+        <span class="sw"><span class="chip miss"></span> Missing (placeholder)</span>
+      </div>
+
+      <h4 style="margin:10px 0 8px; font-weight:800">English</h4>
+      <div class="cmp-grid" style="margin-bottom:14px">
+        <div class="cmp-box"><small class="note">Reference</small><div id="cmpENRef" style="margin-top:6px"></div></div>
+        <div class="cmp-box"><small class="note">Typed</small><div id="cmpENTyped" style="margin-top:6px"></div></div>
+      </div>
+
+      <h4 style="margin:10px 0 8px; font-weight:800">Hindi</h4>
+      <div class="cmp-grid">
+        <div class="cmp-box"><small class="note">Reference</small><div id="cmpHIRef" style="margin-top:6px"></div></div>
+        <div class="cmp-box"><small class="note">Typed</small><div id="cmpHITyped" style="margin-top:6px"></div></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Instruction Modal -->
+  <div id="instrBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="instrTitle">
+    <div class="modal">
+      <h2 id="instrTitle">Instructions</h2>
+      <div id="instrBody" class="body"></div>
+      <div class="actions">
+        <button id="instrCancel" class="btn">Cancel</button>
+        <button id="instrOk" class="btn btn-primary">I Understand</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  /* ===== Elements ===== */
+  const els = {
+    stageLabel: document.getElementById('stageLabel'),
+    textDisplay: document.getElementById('textDisplay'),
+    inputArea:  document.getElementById('inputArea'),
+    startBtn:   document.getElementById('startBtn'),
+    submitBtn:  document.getElementById('submitBtn'),
+    resetBtn:   document.getElementById('resetBtn'),
+    timerEl:    document.getElementById('timerEl'),
+    bothResults:document.getElementById('bothResults'),
+    preResultsNote: document.getElementById('preResultsNote'),
+    badgeEN:    document.getElementById('badgeEN'),
+    badgeHI:    document.getElementById('badgeHI'),
+    badgeOverall: document.getElementById('badgeOverall'),
+    passageSet: document.getElementById('passageSet'),
+    hindiFont:  document.getElementById('hindiFont'),
+    fontLabel:  document.getElementById('fontLabel'),
+    toastWrap:  document.getElementById('toastWrap'),
+    toast:      document.getElementById('toast'),
+    instrBackdrop: document.getElementById('instrBackdrop'),
+    instrBody: document.getElementById('instrBody'),
+    instrOk: document.getElementById('instrOk'),
+    instrCancel: document.getElementById('instrCancel'),
+
+    enKeys: document.getElementById('enKeys'),
+    enWords: document.getElementById('enWords'),
+    enWrong: document.getElementById('enWrong'),
+    enPenalty: document.getElementById('enPenalty'),
+    enNet: document.getElementById('enNet'),
+    enNote: document.getElementById('enNote'),
+
+    hiKeys: document.getElementById('hiKeys'),
+    hiWords: document.getElementById('hiWords'),
+    hiWrong: document.getElementById('hiWrong'),
+    hiPenalty: document.getElementById('hiPenalty'),
+    hiNet: document.getElementById('hiNet'),
+    hiNote: document.getElementById('hiNote'),
+
+    infoLang: document.getElementById('infoLang'),
+
+    cmpENRef: document.getElementById('cmpENRef'),
+    cmpENTyped: document.getElementById('cmpENTyped'),
+    cmpHIRef: document.getElementById('cmpHIRef'),
+    cmpHITyped: document.getElementById('cmpHITyped'),
+    comparisonSection: document.getElementById('comparisonSection'),
+  };
+
+  /* ===== Instruction HTML (exact text provided) ===== */
+  const INSTRUCTIONS_HTML = `
+    <ol>
+      <li>The candidates will be provided with the master text passage of about 1500 key depressions in English.</li>
+      <li>The typing can be either word based typing or key strokes based typing.</li>
+      <li>For example, 35 w.p.m. is about 10500 key depressions per hour and 30 w.p.m. corresponds to about 9000 key depression per hour.</li>
+      <li>The duration of the English typing test is 05:00 minute.</li>
+      <li>The countdown timer in the top right corner of the screen will display the remaining time available for you to complete the examination. When the timer reaches zero, the examination will end by itself with typed passage, you are not required to end or submit your test.</li>
+      <li>Candidates are not required to repeat the passage, if he/she has completed the passage once and has time in his/her disposal, however they are allowed to revise and correct their mistakes and inaccuracies, if any, during the prescribed time</li>
+      <li>After every punctuation mark, only One space is to be inserted, e.g. after comma, full stop, mark of interrogation etc. However, candidates are advised to follow the Question paper scrupulously in this regard.</li>
+      <li>The combination of alphanumeric keys followed by one space is termed as one “Word”.</li>
+      <li>Once you have completed typing of the given passage and you do not find any errors or mistakes in it, you may submit it by pressing the submit button. After submission no editing or change in the typed passage is possible.</li>
+      <li>If your computer is locked/switched off or for any type of technical help, please inform a nearby invigilator immediately.</li>
+      <li>In any case of auto restart of the computer, you will be again provided with the full time to type the given passage.</li>
+      <li>After typing a given number of words in the master text passage the space bar will not allow further typing of additional words. For example, if there are 500 words in the master text passage, candidates can type only 500 words and after that space bar will not allow the candidates to type any additional word, however, the keyboard will allow the candidate to continue typing without using the space bar.</li>
+    </ol>`;
+
+  /* ===== State ===== */
+  let intervalId = null;
+  let timeLeft = 300;
+  let started = false;
+  let stage = 'EN';       // 'EN' -> 'HI'
+  let passage = '';
+  let startedAt = null;
+  let results = { EN:null, HI:null }; // will store metrics + comparison HTML
+  let instructionsShownOnce = false;
+
+  let passageSets = [];
+  let englishPassage = "";
+  let hindiPassage   = "";
+
+  /* ===== Toast ===== */
+  let toastTimer = null;
+  function showToast(msg){
+    els.toast.textContent = msg;
+    els.toastWrap.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> els.toastWrap.classList.remove('show'), 1600);
+  }
+
+  /* ===== Helpers ===== */
+  function wordsOf(text){ return text && text.trim().length ? text.trim().split(/\s+/) : []; }
+  function setPassage(text){
+    const words = text.split(/\s+/);
+    els.textDisplay.innerHTML = words.map((w,i)=>`<span data-i="${i}">${w}</span>`).join(' ');
+  }
+  function setFonts(){
+    if (stage === 'HI'){
+      const f = (els.hindiFont.value || 'Mangal') + ", Inter, system-ui";
+      els.textDisplay.style.fontFamily = f;
+      els.inputArea.style.fontFamily   = f;
+    } else {
+      els.textDisplay.style.fontFamily = 'Inter, system-ui';
+      els.inputArea.style.fontFamily   = 'Inter, system-ui';
+    }
+  }
+  function applySet(id){
+    const set = (passageSets || []).find(s=>s.id===id) || passageSets[0];
+    if (!set) return;
+    englishPassage = (set.english||'').trim();
+    hindiPassage   = (set.hindi||'').trim();
+    els.textDisplay.textContent = 'Select “Start” to begin.';
+  }
+  function renderTime(){
+    const m = Math.floor(timeLeft/60), s = String(timeLeft%60).padStart(2,'0');
+    els.timerEl.textContent = m + ":" + s;
+  }
+  function setButtonsRunning(running){
+    els.startBtn.disabled = running;
+    els.resetBtn.disabled = running;
+    els.submitBtn.disabled = !running ? true : false;
+    if (els.passageSet) els.passageSet.disabled = running;
+  }
+  function refreshInfoBar(){
+    els.infoLang.textContent = (stage === 'HI') ? 'Hindi' : 'English';
+  }
+  function resetAll(){
+    if (intervalId) { clearInterval(intervalId); intervalId=null; }
+    timeLeft=300; started=false; stage='EN'; results.EN=results.HI=null;
+    els.timerEl.textContent='5:00';
+    els.textDisplay.textContent='Select a passage and click “Start”.';
+    els.inputArea.value=''; els.inputArea.disabled=true; els.submitBtn.classList.add('hidden');
+    els.bothResults.classList.add('hidden'); els.preResultsNote.classList.remove('hidden');
+    els.startBtn.textContent='Start English';
+    els.stageLabel.innerHTML='Stage: <u>English</u> → Hindi';
+    refreshInfoBar();
+    els.fontLabel.classList.add('hidden'); els.hindiFont.classList.add('hidden');
+    setFonts(); setPassage('');
+    setButtonsRunning(false);
+
+    // init lock snapshots
+    lockIdx = -1; prevLockIdx = -1; lastVal = '';
+    snapshotTextarea();
+
+    // clear badges & numbers
+    els.badgeEN.className = 'value';
+    els.badgeEN.textContent = 'EN: —';
+    els.badgeHI.className = 'value';
+    els.badgeHI.textContent = 'HI: —';
+    els.badgeOverall.className = 'value pill-fail';
+    els.badgeOverall.textContent = 'OVERALL: —';
+    ['enKeys','enWords','enWrong','enPenalty','hiKeys','hiWords','hiWrong','hiPenalty']
+      .forEach(id => els[id].textContent = '0');
+    els.enNet.innerHTML = '0.00<span class="u"> WPM</span>';
+    els.hiNet.innerHTML = '0.00<span class="u"> WPM</span>';
+    els.enNote.classList.add('hidden'); els.enNote.textContent='';
+    els.hiNote.classList.add('hidden'); els.hiNote.textContent='';
+    els.comparisonSection.classList.add('hidden');
+    els.cmpENRef.innerHTML = els.cmpENTyped.innerHTML = '';
+    els.cmpHIRef.innerHTML = els.cmpHITyped.innerHTML = '';
+  }
+
+  /* ===== BACKSPACE LOCK: current + previous word only ===== */
+  function computeLockIndex(val){
+    const spaces = [];
+    for (let i = 0; i < val.length; i++){
+      if (val[i] === ' ') spaces.push(i);
+    }
+    if (spaces.length <= 1) return -1;      // < 2 spaces → no lock yet
+    return spaces[spaces.length - 2];       // lock at second-last space
+  }
+  function nextLockIndex(currentVal, currentLock){
+    const cand = computeLockIndex(currentVal);
+    if (currentLock == null || currentLock < 0) return cand;
+    return Math.max(currentLock, cand);
+  }
+
+  // Lock state & snapshots
+  let lockIdx = -1;
+  let prevLockIdx = -1;
+  let lastVal = '';
+  let lastSelStart = 0;
+  let lastSelEnd = 0;
+
+  function snapshotTextarea(){
+    lastVal = els.inputArea.value;
+    prevLockIdx = lockIdx;
+    try{
+      lastSelStart = els.inputArea.selectionStart;
+      lastSelEnd   = els.inputArea.selectionEnd;
+    }catch(_){}
+  }
+  function violatesPrefixLock(prev, next, boundary){
+    if (boundary < 0) return false;
+    return next.slice(0, boundary + 1) !== prev.slice(0, boundary + 1);
+  }
+
+  /* ===== Flow ===== */
+  function actuallyStartStage(){
+    started = true; timeLeft=300; startedAt=Date.now(); els.timerEl.textContent='5:00';
+    els.inputArea.value=''; els.inputArea.disabled=false; els.inputArea.focus();
+    els.submitBtn.classList.remove('hidden'); els.preResultsNote.classList.remove('hidden');
+    setButtonsRunning(true);
+
+    if (stage === 'EN'){
+      passage = englishPassage;
+      els.stageLabel.innerHTML='Stage: <b>English</b> → Hindi';
+      els.startBtn.textContent='Running…';
+      els.fontLabel.classList.add('hidden'); els.hindiFont.classList.add('hidden');
+    } else {
+      passage = hindiPassage;
+      els.stageLabel.innerHTML='Stage: English → <b>Hindi</b>';
+      els.startBtn.textContent='Running…';
+      els.fontLabel.classList.remove('hidden'); els.hindiFont.classList.remove('hidden');
+    }
+    setPassage(passage); setFonts(); highlightProgress();
+    refreshInfoBar();
+
+    lockIdx = -1; prevLockIdx = -1; lastVal = '';
+    snapshotTextarea();
+
+    renderTime();
+    if (intervalId) clearInterval(intervalId);
+    intervalId = setInterval(function(){
+      timeLeft--;
+      renderTime();
+      if (timeLeft <= 0){
+        clearInterval(intervalId); intervalId=null;
+        finishStage();
+      }
+    }, 1000);
+  }
+
+  function openInstructionsAndStart(){
+    els.instrBody.innerHTML = INSTRUCTIONS_HTML;
+    els.instrBackdrop.classList.add('show');
+    const ok = ()=>{ els.instrBackdrop.classList.remove('show'); instructionsShownOnce = true; actuallyStartStage(); };
+    const cancel = ()=>{ els.instrBackdrop.classList.remove('show'); setButtonsRunning(false); };
+    els.instrOk.onclick = ok;
+    els.instrCancel.onclick = cancel;
+  }
+  function startStage(){
+    if (started) return;
+    setButtonsRunning(true);
+    if (!instructionsShownOnce && stage === 'EN'){ openInstructionsAndStart(); }
+    else { actuallyStartStage(); }
+  }
+  function finishStage(){
+    els.inputArea.disabled=true; els.submitBtn.classList.add('hidden');
+    const r = computeResults(); results[stage]=r;
+    setButtonsRunning(false);
+
+    if (stage==='EN'){
+      // Do NOT show results yet; wait for Hindi to complete
+      let prep=8; els.textDisplay.innerHTML='Hindi starts in <b>'+prep+'</b> seconds… Select font above if needed.';
+      const prepInt=setInterval(function(){
+        prep--; els.textDisplay.innerHTML='Hindi starts in <b>'+prep+'</b> seconds… Select font above if needed.';
+        if(prep<=0){ clearInterval(prepInt); stage='HI'; els.timerEl.textContent='5:00'; els.startBtn.textContent='Start Hindi'; startStage(); }
+      },1000);
+    } else {
+      // Show both panels & overall now + comparisons
+      showCombinedResults();
+      els.bothResults.classList.remove('hidden');
+      els.preResultsNote.classList.add('hidden');
+      renderComparisons(); els.comparisonSection.classList.remove('hidden');
+      els.startBtn.textContent='Restart';
+    }
+    started=false;
+  }
+
+  /* ===== Scoring & Highlights ===== */
+  const MIN_WORDS_EN = 150; // 30*5
+  const MIN_WORDS_HI = 125; // 25*5
+
+  function buildComparisonHTML(ref, typed){
+    const refTokens = ref.split(/\s+/);
+    const typedTokens = typed.length ? typed.trim().split(/\s+/) : [];
+    const maxLen = Math.max(refTokens.length, typedTokens.length);
+    const refParts = [];
+    const typedParts = [];
+
+    for (let i=0;i<maxLen;i++){
+      const r = refTokens[i];
+      const t = typedTokens[i];
+
+      if (r == null){ // extra typed word
+        // only on typed side
+        typedParts.push(`<span class="w extra">${t}</span>`);
+        continue;
+      }
+      if (t == null){ // missing typed word
+        refParts.push(`<span class="w miss">${r}</span>`);
+        typedParts.push(`<span class="w miss">▢</span>`);
+        continue;
+      }
+      if (r === t){
+        refParts.push(`<span class="w ok">${r}</span>`);
+        typedParts.push(`<span class="w ok">${t}</span>`);
+      }else{
+        refParts.push(`<span class="w err">${r}</span>`);
+        typedParts.push(`<span class="w err">${t}</span>`);
+      }
+    }
+    return { refHTML: refParts.join(' '), typedHTML: typedParts.join(' ') };
+  }
+
+  function computeResults(){
+    const elapsedSec = Math.max(1, Math.round((Date.now()-startedAt)/1000));
+    const minutes = elapsedSec/60;
+
+    const refWords = passage.split(/\s+/);
+    const typedRaw = els.inputArea.value;
+    const typedWords = wordsOf(typedRaw);
+    const spans = els.textDisplay.querySelectorAll('span');
+
+    // Visual feedback for live view
+    for (let n=0;n<spans.length;n++){ spans[n].classList.remove('ok','err','cur'); }
+    const overlap = Math.min(typedWords.length, refWords.length);
+
+    let wrong = 0; // typed mismatches + over-typed
+    for (let i=0;i<overlap;i++){
+      const span = spans[i];
+      if (typedWords[i] === refWords[i]) span.classList.add('ok');
+      else { span.classList.add('err'); wrong++; }
+    }
+    const overTyped = Math.max(0, typedWords.length - refWords.length);
+    wrong += overTyped;
+
+    // cursor
+    const curIndex = Math.max(0, typedWords.length - 1);
+    const curSpan = spans[curIndex];
+    if (curSpan){ curSpan.classList.add('cur'); curSpan.scrollIntoView({block:'nearest', inline:'nearest'}); }
+
+    // totals
+    const keystrokes = typedRaw.length;
+    const totalWords = typedWords.length;
+
+    // penalty with 5-word grace; only typed errors
+    const grace = 5;
+    const penalty = Math.max(0, wrong - grace);
+
+    // Net WPM (word-count model)
+    const netWPM = Math.max(0, (totalWords - penalty)) / minutes;
+
+    // thresholds
+    const minSpeed = stage === 'HI' ? 25 : 30;
+    const minWords = stage === 'HI' ? MIN_WORDS_HI : MIN_WORDS_EN;
+
+    // pass/fail requires BOTH gates
+    const meetsWords = totalWords >= minWords;
+    const meetsSpeed = netWPM >= minSpeed;
+    const passed = meetsWords && meetsSpeed;
+
+    // Build comparison HTML for this stage
+    const cmp = buildComparisonHTML(passage, typedRaw);
+
+    // write fields for this stage (no reveal until both done)
+    if (stage === 'EN'){
+      els.enKeys.textContent = keystrokes;
+      els.enWords.textContent = totalWords;
+      els.enWrong.textContent = wrong;
+      els.enPenalty.textContent = penalty;
+      els.enNet.innerHTML = netWPM.toFixed(2) + '<span class="u"> WPM</span>';
+      els.badgeEN.className = 'value ' + (passed ? 'pill-pass' : 'pill-fail');
+      els.badgeEN.textContent = 'EN: ' + (passed ? 'PASS' : 'FAIL');
+      if (!meetsWords){
+        els.enNote.textContent = `Minimum ${minWords} words required (you typed ${totalWords}).`;
+        els.enNote.classList.remove('hidden');
+      } else { els.enNote.classList.add('hidden'); els.enNote.textContent=''; }
+    } else {
+      els.hiKeys.textContent = keystrokes;
+      els.hiWords.textContent = totalWords;
+      els.hiWrong.textContent = wrong;
+      els.hiPenalty.textContent = penalty;
+      els.hiNet.innerHTML = netWPM.toFixed(2) + '<span class="u"> WPM</span>';
+      els.badgeHI.className = 'value ' + (passed ? 'pill-pass' : 'pill-fail');
+      els.badgeHI.textContent = 'HI: ' + (passed ? 'PASS' : 'FAIL');
+      if (!meetsWords){
+        els.hiNote.textContent = `Minimum ${minWords} words required (you typed ${totalWords}).`;
+        els.hiNote.classList.remove('hidden');
+      } else { els.hiNote.classList.add('hidden'); els.hiNote.textContent=''; }
+    }
+
+    return { keystrokes, words: totalWords, wrong, penalty, netWPM, passed, cmp };
+  }
+
+  function renderComparisons(){
+    if (results.EN){
+      els.cmpENRef.innerHTML = results.EN.cmp.refHTML;
+      els.cmpENTyped.innerHTML = results.EN.cmp.typedHTML;
+    }
+    if (results.HI){
+      els.cmpHIRef.innerHTML = results.HI.cmp.refHTML;
+      els.cmpHITyped.innerHTML = results.HI.cmp.typedHTML;
+    }
+  }
+
+  function showCombinedResults(){
+    const enPass = results.EN && results.EN.passed === true;
+    const hiPass = results.HI && results.HI.passed === true;
+    els.badgeOverall.className = 'value ' + (enPass && hiPass ? 'pill-pass' : 'pill-fail');
+    els.badgeOverall.textContent = 'OVERALL: ' + ((enPass && hiPass) ? 'PASS' : 'FAIL');
+  }
+
+  function highlightProgress(){
+    const refWords = passage.split(/\s+/);
+    const typedWords = wordsOf(els.inputArea.value);
+    const spans = els.textDisplay.querySelectorAll('span');
+    for (let i=0;i<spans.length;i++){
+      const span = spans[i]; span.classList.remove('ok','err','cur');
+      const tw = typedWords[i]; if (tw==null) continue;
+      if (tw === refWords[i]) span.classList.add('ok'); else span.classList.add('err');
+    }
+    const curIndex = Math.max(0, typedWords.length - 1);
+    const curSpan = spans[curIndex]; if (curSpan){ curSpan.classList.add('cur'); curSpan.scrollIntoView({block:'nearest', inline:'nearest'}); }
+  }
+
+  /* ===== Global guards ===== */
+  window.addEventListener('keydown', function(e){
+    if (!started) return;
+    if (e.key === 'F5' || ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === 'r'))){
+      showToast('⚠️ CTRL/CMD or Paste not allowed');
+      e.preventDefault();
+    }
+  });
+
+  /* ===== Keep caret out of locked region ===== */
+  els.inputArea.addEventListener('select', snapCaretIfNeeded);
+  document.addEventListener('selectionchange', function(){
+    if (!started) return;
+    if (document.activeElement === els.inputArea) snapCaretIfNeeded();
+  });
+  function snapCaretIfNeeded(){
+    if (lockIdx < 0) return; // no lock
+    const s = els.inputArea.selectionStart;
+    const e = els.inputArea.selectionEnd;
+    const leftMost = Math.min(s, e);
+    if (leftMost <= lockIdx){
+      const safe = Math.max(lockIdx + 1, Math.max(s, e));
+      els.inputArea.setSelectionRange(safe, safe);
+    }
+  }
+
+  /* ===== Primary: beforeinput (respect lock) ===== */
+  els.inputArea.addEventListener('beforeinput', function(e){
+    if (!started) return;
+
+    snapshotTextarea();  // prevLockIdx is set here
+    const t = e.inputType;
+
+    if (t === 'insertFromPaste' || t === 'insertFromDrop'){
+      showToast('⚠️ CTRL/CMD or Paste not allowed');
+      e.preventDefault(); 
+      return;
+    }
+
+    const deletionTypes = new Set([
+      'deleteContentBackward','deleteContentForward','deleteByCut',
+      'deleteByComposition','historyUndo','deleteByDrag'
+    ]);
+
+    let s = e.target.selectionStart;
+    let ed = e.target.selectionEnd;
+    let aStart = s, aEnd = ed;
+
+    if (t === 'insertText' || t === 'insertCompositionText'){
+      if (s !== ed && Math.min(s, ed) <= prevLockIdx){ e.preventDefault(); return; }
+      if (s === ed && s <= prevLockIdx){ e.preventDefault(); return; }
+    } else if (deletionTypes.has(t)){
+      if (s === ed){
+        if (t === 'deleteContentBackward'){ aStart = s - 1; aEnd = s; }
+        else if (t === 'deleteContentForward'){ aStart = s; aEnd = s + 1; }
+      }
+      if (aStart <= prevLockIdx){ e.preventDefault(); return; }
+    }
+  });
+
+  /* ===== Keydown fallback ===== */
+  els.inputArea.addEventListener('keydown', function(e){
+    if (!started) return;
+
+    const changeKeys = ['Backspace','Delete','Enter',' ','ArrowLeft','Home'];
+    if (e.key && changeKeys.includes(e.key)) snapshotTextarea();
+
+    if (e.ctrlKey || e.metaKey){
+      if (e.key !== 'Control' && e.key !== 'Meta'){ showToast('⚠️ CTRL/CMD or Paste not allowed'); }
+      e.preventDefault(); 
+      return;
+    }
+    if (e.shiftKey && e.key === 'Insert'){
+      showToast('⚠️ CTRL/CMD or Paste not allowed');
+      e.preventDefault(); 
+      return;
+    }
+
+    // prevent extra words beyond passage
+    if (e.key === ' '){
+      const val = els.inputArea.value;
+      const refCount = passage.split(/\s+/).length;
+      const typedCount = (val.trim().length ? val.trim().split(/\s+/).length : 0);
+      if (typedCount >= refCount){ e.preventDefault(); return; }
+    }
+
+    const boundary = (typeof prevLockIdx === 'number') ? prevLockIdx : lockIdx;
+
+    if (boundary >= 0){
+      if (e.key === 'ArrowLeft' || e.key === 'Home'){
+        const s = els.inputArea.selectionStart;
+        const en = els.inputArea.selectionEnd;
+        const nextPos = (e.key==='Home') ? 0 : s - 1;
+        if (Math.min(nextPos, en) <= boundary){
+          els.inputArea.setSelectionRange(boundary + 1, boundary + 1);
+          e.preventDefault(); 
+          return;
+        }
+      }
+      if (e.key === 'Backspace' || e.key === 'Delete'){
+        const s = els.inputArea.selectionStart;
+        const en = els.inputArea.selectionEnd;
+
+        if (s !== en){
+          if (Math.min(s, en) <= boundary){ e.preventDefault(); return; }
+        } else {
+          if (e.key === 'Backspace' && (s - 1) <= boundary){ e.preventDefault(); return; }
+          if (e.key === 'Delete'    &&  s      <= boundary){ e.preventDefault(); return; }
+        }
+      }
+    }
+  });
+
+  /* ===== Ultimate fallback: input revert + monotonic lock update ===== */
+  els.inputArea.addEventListener('input', function(){
+    if (!started) return;
+
+    const newVal = els.inputArea.value;
+
+    if (violatesPrefixLock(lastVal, newVal, prevLockIdx)){
+      els.inputArea.value = lastVal;
+      const safe = Math.max(prevLockIdx + 1, 0);
+      els.inputArea.setSelectionRange(safe, safe);
+      return;
+    }
+
+    highlightProgress();
+    lockIdx = nextLockIndex(newVal, lockIdx);
+    snapshotTextarea();
+  });
+
+  // Block paste via context menu
+  els.inputArea.addEventListener('paste', function(e){
+    showToast('⚠️ CTRL/CMD or Paste not allowed');
+    e.preventDefault();
+  });
+
+  window.addEventListener('beforeunload', function(e){ if (!started) return; e.preventDefault(); e.returnValue=''; });
+
+  // Buttons
+  els.startBtn.addEventListener('click', function(){
+    if (els.startBtn.textContent==='Restart'){ resetAll(); return; }
+    if (!instructionsShownOnce && stage === 'EN'){
+      els.instrBody.innerHTML = INSTRUCTIONS_HTML;
+      els.instrBackdrop.classList.add('show');
+      els.instrOk.onclick = ()=>{ els.instrBackdrop.classList.remove('show'); instructionsShownOnce = true; actuallyStartStage(); };
+      els.instrCancel.onclick = ()=>{ els.instrBackdrop.classList.remove('show'); setButtonsRunning(false); };
+    } else {
+      actuallyStartStage();
+    }
+  });
+  els.submitBtn.addEventListener('click', function(){
+    if (intervalId) clearInterval(intervalId); intervalId=null; finishStage();
+  });
+  els.resetBtn.addEventListener('click', resetAll);
+  els.hindiFont.addEventListener('change', setFonts);
+  els.passageSet.addEventListener('change', function(){ if (started) return; applySet(els.passageSet.value); });
+
+  /* ===== Load passages.json ===== */
+  async function loadPassages(){
+    try{
+      const res = await fetch('./passages.json?ts=' + Date.now(), { cache: 'no-store' });
+      if(!res.ok) throw new Error('Failed to load passages.json: HTTP ' + res.status);
+      const data = await res.json();
+
+      let sets = [];
+      if (Array.isArray(data.sets)) {
+        sets = data.sets.filter(s => s && s.english && s.hindi);
+      } else if (data.english && data.hindi) {
+        sets = [{ id: data.id || 'default', label: data.label || 'Default', english: data.english, hindi: data.hindi }];
+      } else {
+        throw new Error('Invalid passages.json format');
+      }
+      if (!sets.length) throw new Error('No complete EN/HI pairs found');
+
+      passageSets = sets.map((s, i) => Object.assign({ id: s.id || ('set-'+i), label: s.label || ('Set '+(i+1)) }, s));
+      els.passageSet.innerHTML = passageSets.map(s => `<option value="${s.id}">${s.label}</option>`).join('');
+      els.passageSet.value = passageSets[0].id;
+      applySet(passageSets[0].id);
+
+      els.startBtn.disabled = false;
+      els.startBtn.textContent = 'Start English';
+    }catch(e){
+      console.error('[passages.json] load error:', e);
+      passageSets = [{
+        id:'default', label:'Default',
+        english:"The Uttar Pradesh Subordinate Services Selection Commission conducts the typing test to check a candidate's ability to type accurately at a practical pace. During the examination you will copy the given passage within a strict five minute window. The objective is not only to reach a higher speed, but also to maintain precision while switching between words, punctuation and casing. Students are advised to focus on rhythm, keep their posture neutral and avoid looking at the keyboard. With consistent practice the gross speed and net speed both improve substantially.",
+        hindi:"उत्तर प्रदेश अधीनस्थ सेवा चयन आयोग द्वारा आयोजित टाइपिंग परीक्षा का उद्देश्य अभ्यर्थियों की गति के साथ-साथ शुद्धता का मूल्यांकन करना है। पाँच मिनट की समयावधि में दिए गए अनुच्छेद को हूबहू टाइप करना होता है। ध्यान रखें कि शब्द, विराम-चिह्न और बड़े-छोटे अक्षरों में त्रुटि न हो। स्थिर गति और लय के साथ अभ्यास करने से सकल गति तथा शुद्ध टाइपिंग गति में लगातार सुधार आता है। अभ्यर्थियों को सही कीबोर्ड लेआउट का प्रयोग करते हुए स्क्रीन पर ध्यान केंद्रित रखना चाहिए।"
+      }];
+      els.passageSet.innerHTML = '<option value="default">Default</option>';
+      els.passageSet.value = 'default';
+      applySet('default');
+      els.startBtn.disabled = false;
+      els.startBtn.textContent = 'Start English';
+    }
+  }
+
+  // Init
+  resetAll();
+  loadPassages();
+});
+</script>
+</body>
+</html>
