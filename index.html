@@ -9,41 +9,65 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
-  :root{
-    --bg:#f3f5f7; --card:#ffffff; --muted:#6b7280; --text:#0f172a;
-    --accent:#22c55e; --accent-700:#16a34a; --danger:#ef4444; --warning:#f59e0b;
-    --ring:0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(2,6,23,.10);
-    --soft:0 1px 2px rgba(2,6,23,.05); --radius:14px;
-    --cur-yellow:#fef08a; --err-red:#b91c1c;
+  /* ==== Unified Base (Chakra/Bootstrap-friendly) ==== */
+  :root, :host {
+    /* Palette fallbacks if Chakra/BS not present */
+    --chakra-colors-chakra-body-text: var(--bs-body-color, #1a202c);
+    --chakra-colors-chakra-body-bg: var(--bs-body-bg, #ffffff);
+    --chakra-colors-chakra-border-color: var(--bs-border-color, #e2e8f0);
+    --text-color: var(--bs-body-color, #48494e);
 
-    /* UPS-styled header colors */
+    /* App accents */
+    --bg:#f3f5f7; --card:#ffffff; --muted:#6b7280; --text:#0f172a;
+    --accent:#22c55e; --accent-700:#16a34a; --warning:#f59e0b; --err-red:#b91c1c;
+    --ring:0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(2,6,23,.10);
+    --soft:0 1px 2px rgba(2,6,23,.05);
+
+    /* UPS-style header */
     --ups-blue:#0a78ff; --ups-black:#0b0b0b;
   }
-  *{box-sizing:border-box}
-  body{margin:0; font:14px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; color:var(--text); background:var(--bg)}
-  .page {
-  width: 100vw;         /* span full viewport width */
-  max-width: none;      /* remove restriction */
-  margin: 0;            /* remove centering gap */
-  padding: 10px 20px;           /* remove inner padding */
-}
+  *, *::before, *::after { box-sizing: border-box; border-width: 0; border-style: solid; }
+  html { -webkit-text-size-adjust:100%; text-rendering:optimizeLegibility; }
+  body{
+    margin:0; min-height:100%;
+    color:var(--chakra-colors-chakra-body-text);
+    background:var(--chakra-colors-chakra-body-bg);
+    line-height:1.5;
+    font-family:gordita, Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+    font-weight:400; font-size:16px;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+  }
+  ::selection { background-color:#2a2a2a; color:#fff; }
+
+  /* Full-width layout */
+  .page{ width:100vw; max-width:none; margin:0; padding:10px 16px; }
 
   /* ===== Masthead (screenshot style) ===== */
-  .masthead { box-shadow: var(--ring); border-radius: 8px; overflow: hidden; }
+  .masthead { box-shadow: var(--ring); border-radius: 8px; overflow: hidden; position:sticky; top:0; z-index:500; }
   .titlebar{ background: var(--ups-blue); color:#fff; padding: 10px 18px; text-align:center; }
   .titlebar .titletext{ font-size:22px; font-weight:800; letter-spacing:.2px; }
   .brandbar{ display:flex; align-items:center; justify-content:space-between; background:var(--ups-black); color:#fff; padding:8px 12px; }
   .brandleft{ font-weight:800; font-size:14px; }
   .brandright{ display:flex; align-items:center; gap:18px; }
-  .timerbox{ font-size:20px; font-weight:800; white-space:nowrap; }
-  #timerEl{ color:#fff !important; background:transparent !important; font-weight:800; padding:0; border-radius:0; box-shadow:none; min-width:auto; }
   .userbox{ display:flex; align-items:center; gap:10px; }
   .avatar{ width:56px; height:56px; border-radius:4px; border:1px solid rgba(255,255,255,.35); background:#fff; object-fit:cover; }
   .username{ font-weight:900; letter-spacing:.4px; }
   .infobar{ background:var(--ups-blue); color:#fff; display:flex; gap:42px; padding:10px 18px; font-size:18px; font-weight:700; }
 
+  /* Floating timer bubble (single #timerEl lives here) */
+  .float-timer{
+    position:fixed; top:12px; right:18px; z-index:1000;
+    display:flex; align-items:center; gap:10px;
+    background:#fff; color:#0b1220; padding:10px 14px;
+    border:1px solid var(--chakra-colors-chakra-border-color);
+    border-radius:14px; box-shadow:0 6px 20px rgba(2,6,23,.12); font-weight:800;
+  }
+  .float-timer .label{ opacity:.9; font-weight:800; }
+  .float-timer #timerEl{ color:#0b1220; font-weight:900; min-width:64px; text-align:right; }
+  @media (max-width:640px){ .float-timer{ top:8px; right:10px; padding:8px 12px; } }
+
   /* Controls toolbar */
-  .controls.toolbar{ margin-top:10px; background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; box-shadow: var(--soft); }
+  .controls.toolbar{ margin-top:10px; background:#fff; border:1px solid var(--chakra-colors-chakra-border-color); border-radius:10px; padding:10px 12px; box-shadow: var(--soft); display:flex; gap:12px; align-items:center; }
   .toolbar-label{ color:#0b1220; font-weight:800; margin-left:12px; }
   .toolbar-select{ margin-right:8px; padding:6px 10px; border-radius:8px; border:1px solid #d1d5db; background:#fff; }
   .right{margin-left:auto; display:flex; align-items:center; gap:10px}
@@ -52,23 +76,22 @@
   .btn:hover{background:#1f2937}
 
   /* Sections */
-  .section{background:var(--card); border-radius:var(--radius); box-shadow:var(--ring); padding:18px; margin-top:18px}
+  .section{background:var(--card); border-radius:14px; box-shadow:var(--ring); padding:18px; margin-top:18px; border:1px solid var(--chakra-colors-chakra-border-color);}
   .section h3{margin:0 0 10px; font-size:12px; color:#6b7280; text-transform:uppercase; letter-spacing:.14em}
-  .scroll{max-height:210px; overflow:auto; border:1px solid #e5e7eb; border-radius:12px; padding:16px; background:#fff}
-  .inputbox{min-height:160px; overflow:auto; border:1px solid #e5e7eb; border-radius:12px; padding:16px; background:#f8fafc}
+  .scroll{max-height:210px; overflow:auto; border:1px solid var(--chakra-colors-chakra-border-color); border-radius:12px; padding:16px; background:#fff}
+  .inputbox{min-height:160px; overflow:auto; border:1px solid var(--chakra-colors-chakra-border-color); border-radius:12px; padding:16px; background:#f8fafc}
 
   /* Typing visuals */
   #textDisplay span.ok{ color:#6b7280; }
   #textDisplay span.err{ color:var(--err-red); }
-  #textDisplay span.cur{ background:var(--cur-yellow); color:#111827; padding:2px 3px; border-radius:4px }
+  #textDisplay span.cur{ background:#fef08a; color:#111827; padding:2px 3px; border-radius:4px }
 
   .grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px}
   .grid-3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px}
-  .stat{border:1px solid #e5e7eb; border-radius:14px; padding:14px 16px; background:#fff}
+  .stat{border:1px solid var(--chakra-colors-chakra-border-color); border-radius:14px; padding:14px 16px; background:#fff}
   .stat small{display:block; color:#6b7280; font-weight:700; text-transform:uppercase; letter-spacing:.12em}
   .value{font-size:20px; font-weight:800; margin-top:6px}
   .value .u{font-size:11px; color:#6b7280; font-weight:700; margin-left:4px}
-  .final{margin-top:12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
   .pill-fail{background:#fee2e2; color:#991b1b; border:1px solid #fecaca; font-weight:900; letter-spacing:.08em; padding:10px 18px; border-radius:12px}
   .pill-pass{background:#dcfce7; color:#065f46; border:1px solid #bbf7d0; font-weight:900; letter-spacing:.08em; padding:10px 18px; border-radius:12px}
   .note{color:#6b7280}
@@ -93,7 +116,7 @@
   }
   .modal{background:#fff; width:min(760px,calc(100% - 24px)); border-radius:16px; box-shadow:var(--ring); padding:18px;}
   .modal h2{margin:0 0 10px; font-size:18px; font-weight:800}
-  .modal .body{max-height:52vh; overflow:auto; border:1px solid #e5e7eb; border-radius:10px; padding:12px; background:#f8fafc;}
+  .modal .body{max-height:52vh; overflow:auto; border:1px solid var(--chakra-colors-chakra-border-color); border-radius:10px; padding:12px; background:#f8fafc;}
   .modal .body ol{margin:0; padding-left:20px;}
   .modal .body li{margin:6px 0;}
   .modal .actions{display:flex; justify-content:flex-end; gap:10px; margin-top:12px}
@@ -103,7 +126,7 @@
 
   /* Comparison */
   .cmp-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-  .cmp-box{border:1px solid #e5e7eb; border-radius:12px; padding:12px; background:#fff; max-height:240px; overflow:auto;}
+  .cmp-box{border:1px solid var(--chakra-colors-chakra-border-color); border-radius:12px; padding:12px; background:#fff; max-height:240px; overflow:auto;}
   .w{padding:1px 2px; border-radius:3px}
   .w.ok{color:#6b7280}
   .w.err{color:#fff; background:#ef4444}
@@ -116,23 +139,30 @@
   .chip.err{background:#ef4444}
   .chip.miss{background:#fbbf24}
   .chip.extra{background:#ef4444}
+
   @media (max-width:920px){.grid-3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+
+  <!-- Floating timer (keep a single #timerEl in the page) -->
+  <div class="float-timer" aria-live="polite" role="timer">
+    <span class="label">Time left:-</span>
+    <span id="timerEl">5:00</span>
+  </div>
+
   <div class="page">
     <!-- Masthead -->
     <header class="masthead">
       <div class="titlebar">
-        <div class="titletext" id="testTitle">Typing Test Id 22536 - New Paradigms of Urbanism in Himalaya</div>
+        <div class="titletext" id="testTitle">Typing Test — UPSSSC Assistants English Typing Test</div>
       </div>
       <div class="brandbar">
         <div class="brandleft">UPSSSC Assistants English Typing Test</div>
         <div class="brandright">
-          <div class="timerbox">Time left:- <span id="timerEl">5:00</span></div>
           <div class="userbox">
             <img class="avatar" src="https://i.imgur.com/1X4Qq2v.png" alt="avatar">
-            <div class="username" id="userName">ANKUR</div>
+            <div class="username" id="userName">CANDIDATE</div>
           </div>
         </div>
       </div>
@@ -432,13 +462,13 @@ document.addEventListener('DOMContentLoaded', function(){
     for (let i = 0; i < val.length; i++){
       if (val[i] === ' ') spaces.push(i);
     }
-    if (spaces.length <= 1) return -1;      // < 2 spaces → no lock yet
-    return spaces[spaces.length - 2];       // lock at second-last space
+    if (spaces.length <= 1) return -1;      // <2 spaces → no lock yet
+    return spaces[spaces.length - 2];       // lock at second-last space (inclusive)
   }
   function nextLockIndex(currentVal, currentLock){
     const cand = computeLockIndex(currentVal);
     if (currentLock == null || currentLock < 0) return cand;
-    return Math.max(currentLock, cand);
+    return Math.max(currentLock, cand);     // never move lock backward
   }
 
   // Lock state & snapshots
@@ -550,7 +580,6 @@ document.addEventListener('DOMContentLoaded', function(){
       const t = typedTokens[i];
 
       if (r == null){ // extra typed word
-        // only on typed side
         typedParts.push(`<span class="w extra">${t}</span>`);
         continue;
       }
@@ -866,11 +895,11 @@ document.addEventListener('DOMContentLoaded', function(){
     }catch(e){
       console.error('[passages.json] load error:', e);
       passageSets = [{
-        id:'default', label:'Default',
+        id:'default', label:'Test 1 — Normal',
         english:"The Uttar Pradesh Subordinate Services Selection Commission conducts the typing test to check a candidate's ability to type accurately at a practical pace. During the examination you will copy the given passage within a strict five minute window. The objective is not only to reach a higher speed, but also to maintain precision while switching between words, punctuation and casing. Students are advised to focus on rhythm, keep their posture neutral and avoid looking at the keyboard. With consistent practice the gross speed and net speed both improve substantially.",
-        hindi:"उत्तर प्रदेश अधीनस्थ सेवा चयन आयोग द्वारा आयोजित टाइपिंग परीक्षा का उद्देश्य अभ्यर्थियों की गति के साथ-साथ शुद्धता का मूल्यांकन करना है। पाँच मिनट की समयावधि में दिए गए अनुच्छेद को हूबहू टाइप करना होता है। ध्यान रखें कि शब्द, विराम-चिह्न और बड़े-छोटे अक्षरों में त्रुटि न हो। स्थिर गति और लय के साथ अभ्यास करने से सकल गति तथा शुद्ध टाइपिंग गति में लगातार सुधार आता है। अभ्यर्थियों को सही कीबोर्ड लेआउट का प्रयोग करते हुए स्क्रीन पर ध्यान केंद्रित रखना चाहिए।"
+        hindi:"रवि मानता है कि समय की पाबंदी, ईमानदारी और विवरण पर ध्यान रखना करियर की प्रगति के लिए आवश्यक हैं। एक दिन, उसका कंप्यूटर काम करना बंद कर गया, फिर भी उसने अपने सहकर्मी के सिस्टम का उपयोग करके सभी कार्य पूरे किए। कार्यालयीन कार्यों के अलावा, रवि नए कर्मचारियों को कार्यालय प्रक्रियाओं को समझने में भी मदद करता है। कार्यालय में दस्तावेज़ों को संभालने के लिए सख्त दिशा-निर्देश हैं। प्रत्येक फाइल को निर्धारित शेल्फ पर रखा जाना चाहिए और सही तिथियों और संदर्भ संख्याओं के साथ लेबल किया जाना चाहिए। कर्मचारियों से अपेक्षा की जाती है कि वे ईमेल शिष्टाचार का पालन करें, ताकि आधिकारिक संचार स्पष्ट, पेशेवर और संक्षिप्त हो।"
       }];
-      els.passageSet.innerHTML = '<option value="default">Default</option>';
+      els.passageSet.innerHTML = '<option value="default">Test 1 — Normal</option>';
       els.passageSet.value = 'default';
       applySet('default');
       els.startBtn.disabled = false;
