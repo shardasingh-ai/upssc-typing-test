@@ -42,28 +42,28 @@
   /* Full-width layout */
   .page{ width:100vw; max-width:none; margin:0; padding:10px 16px; }
 
-/* ===== Masthead (smart-sticky, compact height) ===== */
+/* ===== Masthead (static, extra-compact) ===== */
 .masthead{
-  position: sticky;
-  top: 0;
-  z-index: 500;
+  position: static;          /* was: sticky — now static */
+  z-index: 1;                /* no need to be high since it's static */
   box-shadow: var(--ring);
-  border-radius: 6px;
+  border-radius: 4px;
   overflow: hidden;
-  transition: transform .25s ease, box-shadow .25s ease;
+  /* no transform/box-shadow transitions needed for static header */
 }
 
-/* Reduced heights and paddings */
+/* Much smaller heights via padding + font-size */
 .titlebar{
   background: var(--ups-blue);
   color:#fff;
-  padding: 6px 12px;
+  padding: 3px 8px;          /* ↓ height */
   text-align:center;
 }
 .titlebar .titletext{
-  font-size:18px;
+  font-size: 15px;           /* ↓ text size */
   font-weight:800;
   letter-spacing:.2px;
+  line-height:1.2;
 }
 
 .brandbar{
@@ -72,37 +72,40 @@
   justify-content:space-between;
   background:var(--ups-black);
   color:#fff;
-  padding:5px 10px;
+  padding: 2px 8px;          /* ↓ height */
 }
-.brandleft{ font-weight:700; font-size:13px; }
-.brandright{ display:flex; align-items:center; gap:12px; }
-.userbox{ display:flex; align-items:center; gap:8px; }
-.avatar{ width:40px; height:40px; border-radius:4px; border:1px solid rgba(255,255,255,.3); background:#fff; object-fit:cover; }
-.username{ font-weight:800; letter-spacing:.3px; font-size:13px; }
+.brandleft{ font-weight:700; font-size:12px; line-height:1.2; }
+.brandright{ display:flex; align-items:center; gap:10px; }
+.userbox{ display:flex; align-items:center; gap:6px; }
+.avatar{ width:28px; height:28px; border-radius:4px; border:1px solid rgba(255,255,255,.3); background:#fff; object-fit:cover; }
+.username{ font-weight:800; letter-spacing:.3px; font-size:12px; line-height:1.2; }
 
 .infobar{
   background:var(--ups-blue);
   color:#fff;
   display:flex;
-  gap:24px;
-  padding:6px 12px;
-  font-size:14px;
+  gap:12px;                  /* tighter spacing */
+  padding: 3px 8px;          /* ↓ height */
+  font-size: 12px;           /* ↓ text size */
   font-weight:700;
+  line-height:1.2;
 }
 
-/* Compact + hide on scroll */
-.masthead--compact .titlebar{ padding:4px 10px; }
-.masthead--compact .titletext{ font-size:16px; }
-.masthead--compact .brandbar{ padding:3px 8px; }
-.masthead--compact .infobar{ padding:4px 10px; font-size:13px; gap:16px; }
+/* Neutralize smart-sticky class effects (kept harmless if JS still toggles) */
+.masthead--compact .titlebar{ padding: 3px 8px; }
+.masthead--compact .titletext{ font-size: 15px; }
+.masthead--compact .brandbar{ padding: 2px 8px; }
+.masthead--compact .infobar{ padding: 3px 8px; font-size:12px; gap:12px; }
 
+/* Never hide since header is static */
 .masthead--hidden{
-  transform: translateY(calc(-100% - 6px));
-  box-shadow: none;
+  transform: none !important;
+  box-shadow: var(--ring);
 }
 
-/* Floating timer always above */
+/* Floating timer stays above content */
 .float-timer{ z-index: 1000; }
+
 
 
   /* Floating timer bubble (single #timerEl lives here) */
