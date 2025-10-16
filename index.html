@@ -652,18 +652,37 @@ document.addEventListener('DOMContentLoaded', function(){
   const MIN_WORDS_HI = 125; // 25*5
 
   function highlightProgress(){
-    const refWords = passage.split(/\s+/);
-    const typedWords = wordsOf(els.inputArea.value);
-    const spans = els.textDisplay.querySelectorAll('span');
+  const refWords = passage.split(/\s+/);
+  const typedRaw = els.inputArea.value;
+  const endsWithSpace = /\s$/.test(typedRaw);          // <-- NEW: detect trailing space
+  const typedWords = wordsOf(typedRaw);
+  const spans = els.textDisplay.querySelectorAll('span');
 
-    for (let i=0;i<spans.length;i++){
-      const span = spans[i]; span.classList.remove('ok','err','cur');
-      const tw = typedWords[i]; if (tw==null) continue;
-      if (tw === refWords[i]) span.classList.add('ok'); else span.classList.add('err');
+  // clear classes
+  for (let i=0;i<spans.length;i++){ spans[i].classList.remove('ok','err','cur'); }
+
+  // compare only fully-committed words
+  const compareCount = Math.min(typedWords.length, refWords.length);
+  for (let i=0;i<compareCount;i++){
+    if (!endsWithSpace && i === typedWords.length - 1) {
+      // last word still being typed → don't mark ok/err yet
+      break;
     }
-    const curIndex = Math.max(0, typedWords.length - 1);
-    const curSpan = spans[curIndex]; if (curSpan){ curSpan.classList.add('cur'); curSpan.scrollIntoView({block:'nearest', inline:'nearest'}); }
+    if (typedWords[i] === refWords[i]) spans[i].classList.add('ok');
+    else spans[i].classList.add('err');
   }
+
+  // cursor (cur) position
+  let curIndex = endsWithSpace ? typedWords.length : Math.max(0, typedWords.length - 1);
+  if (curIndex >= refWords.length) curIndex = refWords.length - 1;
+  if (curIndex < 0) curIndex = 0;
+
+  const curSpan = spans[curIndex];
+  if (curSpan){
+    curSpan.classList.add('cur');
+    curSpan.scrollIntoView({block:'nearest', inline:'nearest'});
+  }
+}
   const debouncedHighlight = debounce(highlightProgress, 80);
 
   /* Word-level LCS diff for better alignment (used on submit only) */
