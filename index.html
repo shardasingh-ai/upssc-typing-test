@@ -9,145 +9,125 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
-  /* ==== Unified Base (Chakra/Bootstrap-friendly) ==== */
+  /* ==== Base tokens ==== */
   :root, :host {
-    /* Palette fallbacks if Chakra/BS not present */
-    --chakra-colors-chakra-body-text: var(--bs-body-color, #1a202c);
-    --chakra-colors-chakra-body-bg: var(--bs-body-bg, #ffffff);
-    --chakra-colors-chakra-border-color: var(--bs-border-color, #e2e8f0);
-    --text-color: var(--bs-body-color, #48494e);
-
-    /* App accents */
-    --bg:#f3f5f7; --card:#ffffff; --muted:#6b7280; --text:#0f172a;
-    --accent:#22c55e; --accent-700:#16a34a; --warning:#f59e0b; --err-red:#b91c1c;
+    --bg:#f7f7fb; --card:#ffffff; --text:#0f172a; --muted:#6b7280; --border:#e5e7eb;
+    --accent:#22c55e; --accent-700:#16a34a; --warn:#b45309; --warning:#f59e0b; --err:#b91c1c; --pass:#065f46;
     --ring:0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(2,6,23,.10);
     --soft:0 1px 2px rgba(2,6,23,.05);
-
-    /* UPS-style header */
     --ups-blue:#0a78ff; --ups-black:#0b0b0b;
   }
   *, *::before, *::after { box-sizing: border-box; border-width: 0; border-style: solid; }
-  html { -webkit-text-size-adjust:100%; text-rendering:optimizeLegibility; }
+  html{ -webkit-text-size-adjust:100%; text-rendering:optimizeLegibility; scroll-behavior:smooth; }
   body{
     margin:0; min-height:100%;
-    color:var(--chakra-colors-chakra-body-text);
-    background:var(--chakra-colors-chakra-body-bg);
-    line-height:1.5;
-    font-family:gordita, Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
-    font-weight:400; font-size:16px;
+    color:var(--text);
+    background:var(--bg);
+    line-height:1.55;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans", "Mangal", Arial, sans-serif;
+    font-feature-settings:"kern","liga","clig";
     -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   }
   ::selection { background-color:#2a2a2a; color:#fff; }
 
-  /* Full-width layout */
-  .page{ width:100vw; max-width:none; margin:0; padding:10px 16px; }
-
-/* ===== Masthead (static, extra-compact) ===== */
-.masthead{
-  position: static;          /* was: sticky — now static */
-  z-index: 1;                /* no need to be high since it's static */
-  box-shadow: var(--ring);
-  border-radius: 4px;
-  overflow: hidden;
-  /* no transform/box-shadow transitions needed for static header */
-}
-
-/* Much smaller heights via padding + font-size */
-.titlebar{
-  background: var(--ups-blue);
-  color:#fff;
-  padding: 3px 8px;          /* ↓ height */
-  text-align:center;
-}
-.titlebar .titletext{
-  font-size: 15px;           /* ↓ text size */
-  font-weight:800;
-  letter-spacing:.2px;
-  line-height:1.2;
-}
-
-.brandbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:var(--ups-black);
-  color:#fff;
-  padding: 2px 8px;          /* ↓ height */
-}
-.brandleft{ font-weight:700; font-size:12px; line-height:1.2; }
-.brandright{ display:flex; align-items:center; gap:10px; }
-.userbox{ display:flex; align-items:center; gap:6px; }
-.avatar{ width:14px; height:14px; border-radius:4px; border:1px solid rgba(255,255,255,.3); background:#fff; object-fit:cover; }
-.username{ font-weight:800; letter-spacing:.3px; font-size:12px; line-height:1.2; }
-
-.infobar{
-  background:var(--ups-blue);
-  color:#fff;
-  display:flex;
-  gap:12px;                  /* tighter spacing */
-  padding: 3px 8px;          /* ↓ height */
-  font-size: 12px;           /* ↓ text size */
-  font-weight:700;
-  line-height:1.2;
-}
-
-/* Neutralize smart-sticky class effects (kept harmless if JS still toggles) */
-.masthead--compact .titlebar{ padding: 3px 8px; }
-.masthead--compact .titletext{ font-size: 15px; }
-.masthead--compact .brandbar{ padding: 2px 8px; }
-.masthead--compact .infobar{ padding: 3px 8px; font-size:12px; gap:12px; }
-
-/* Never hide since header is static */
-.masthead--hidden{
-  transform: none !important;
-  box-shadow: var(--ring);
-}
-
-/* Floating timer stays above content */
-.float-timer{ z-index: 1000; }
-
-
-
-  /* Floating timer bubble (single #timerEl lives here) */
-  .float-timer{
-    position:fixed; top:12px; right:18px; z-index:1000;
-    display:flex; align-items:center; gap:10px;
-    background:#fff; color:#0b1220; padding:10px 14px;
-    border:1px solid var(--chakra-colors-chakra-border-color);
-    border-radius:14px; box-shadow:0 6px 20px rgba(2,6,23,.12); font-weight:800;
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; scroll-behavior: auto !important; }
   }
-  .float-timer .label{ opacity:.9; font-weight:800; }
-  .float-timer #timerEl{ color:#0b1220; font-weight:900; min-width:64px; text-align:right; }
-  @media (max-width:640px){ .float-timer{ top:8px; right:10px; padding:8px 12px; } }
+
+  /* Page containers */
+  .page { width:100%; max-width:1200px; margin:0 auto; padding:12px 16px; }
+  @media (min-width:1400px){ .page{ max-width:1280px; } }
+
+  /* ===== Masthead (static, extra-compact) ===== */
+  .masthead{
+    position: static;
+    z-index: 1;
+    box-shadow: var(--ring);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top:8px;
+  }
+  .titlebar{
+    background: var(--ups-blue);
+    color:#fff;
+    padding: 3px 8px;
+    text-align:center;
+  }
+  .titlebar .titletext{
+    font-size: 15px;
+    font-weight:800;
+    letter-spacing:.2px;
+    line-height:1.2;
+  }
+  .brandbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:var(--ups-black);
+    color:#fff;
+    padding: 2px 8px;
+  }
+  .brandleft{ font-weight:700; font-size:12px; line-height:1.2; }
+  .brandright{ display:flex; align-items:center; gap:10px; }
+  .userbox{ display:flex; align-items:center; gap:6px; }
+  .avatar{
+    width:24px; height:24px; border-radius:50%;
+    border:1px solid rgba(255,255,255,.3); background:#fff; object-fit:contain;
+  }
+  .username{ font-weight:800; letter-spacing:.3px; font-size:12px; line-height:1.2; }
+  .infobar{
+    background:var(--ups-blue);
+    color:#fff;
+    display:flex; gap:12px;
+    padding: 3px 8px;
+    font-size: 12px; font-weight:700; line-height:1.2;
+  }
+
+  /* Floating timer bubble */
+  .float-timer{
+    position:fixed; top:10px; right:12px; z-index:1000;
+    display:flex; align-items:center; gap:8px;
+    background:#fff; color:#0b1220; padding:8px 12px;
+    border:1px solid var(--border);
+    border-radius:12px; box-shadow:0 6px 20px rgba(2,6,23,.12); font-weight:800;
+  }
+  .float-timer .label{ opacity:.9; font-weight:800; font-size:12px; }
+  .float-timer #timerEl{ color:#0b1220; font-weight:900; min-width:58px; text-align:right; }
 
   /* Controls toolbar */
-  .controls.toolbar{ margin-top:10px; background:#fff; border:1px solid var(--chakra-colors-chakra-border-color); border-radius:10px; padding:10px 12px; box-shadow: var(--soft); display:flex; gap:12px; align-items:center; }
+  .controls.toolbar{
+    margin-top:10px; background:#fff; border:1px solid var(--border);
+    border-radius:10px; padding:10px 12px; box-shadow: var(--soft);
+    display:flex; gap:12px; align-items:center;
+  }
   .toolbar-label{ color:#0b1220; font-weight:800; margin-left:12px; }
   .toolbar-select{ margin-right:8px; padding:6px 10px; border-radius:8px; border:1px solid #d1d5db; background:#fff; }
   .right{margin-left:auto; display:flex; align-items:center; gap:10px}
-  .btn{background:#0f172a; color:#fff; border:none; padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer}
-  .btn[disabled]{opacity:.6; cursor:not-allowed}
+  .btn{background:#0f172a; color:#fff; border:none; padding:8px 12px; border-radius:10px; font-weight:800; cursor:pointer}
+  .btn[disabled]{opacity:.45; cursor:not-allowed}
   .btn:hover{background:#1f2937}
+  :focus-visible{ outline: 3px solid #2563eb; outline-offset: 2px; }
 
   /* Sections */
-  .section{background:var(--card); border-radius:14px; box-shadow:var(--ring); padding:18px; margin-top:18px; border:1px solid var(--chakra-colors-chakra-border-color);}
+  .section{background:var(--card); border-radius:12px; box-shadow:var(--ring); padding:16px; margin-top:14px; border:1px solid var(--border);}
   .section h3{margin:0 0 10px; font-size:12px; color:#6b7280; text-transform:uppercase; letter-spacing:.14em}
-  .scroll{max-height:210px; overflow:auto; border:1px solid var(--chakra-colors-chakra-border-color); border-radius:12px; padding:16px; background:#fff}
-  .inputbox{min-height:160px; overflow:auto; border:1px solid var(--chakra-colors-chakra-border-color); border-radius:12px; padding:16px; background:#f8fafc}
+  .scroll{max-height:210px; overflow:auto; border:1px solid var(--border); border-radius:10px; padding:12px; background:#fff}
+  .inputbox{min-height:160px; overflow:auto; border:1px solid var(--border); border-radius:10px; padding:12px; background:#f8fafc}
 
   /* Typing visuals */
   #textDisplay span.ok{ color:#6b7280; }
-  #textDisplay span.err{ color:var(--err-red); }
+  #textDisplay span.err{ color:var(--err); }
   #textDisplay span.cur{ background:#fef08a; color:#111827; padding:2px 3px; border-radius:4px }
 
-  .grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px}
-  .grid-3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px}
-  .stat{border:1px solid var(--chakra-colors-chakra-border-color); border-radius:14px; padding:14px 16px; background:#fff}
+  .grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px}
+  .grid-3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px}
+  .stat{border:1px solid var(--border); border-radius:12px; padding:12px; background:#fff}
   .stat small{display:block; color:#6b7280; font-weight:700; text-transform:uppercase; letter-spacing:.12em}
-  .value{font-size:20px; font-weight:800; margin-top:6px}
+  .value{font-size:18px; font-weight:800; margin-top:6px}
   .value .u{font-size:11px; color:#6b7280; font-weight:700; margin-left:4px}
-  .pill-fail{background:#fee2e2; color:#991b1b; border:1px solid #fecaca; font-weight:900; letter-spacing:.08em; padding:10px 18px; border-radius:12px}
-  .pill-pass{background:#dcfce7; color:#065f46; border:1px solid #bbf7d0; font-weight:900; letter-spacing:.08em; padding:10px 18px; border-radius:12px}
+  .pill-fail{background:#fee2e2; color:#991b1b; border:1px solid #fecaca; font-weight:900; letter-spacing:.08em; padding:8px 14px; border-radius:10px; display:inline-block}
+  .pill-pass{background:#dcfce7; color:#065f46; border:1px solid #bbf7d0; font-weight:900; letter-spacing:.08em; padding:8px 14px; border-radius:10px; display:inline-block}
   .note{color:#6b7280}
   .mini-note{color:#991b1b; font-weight:700; font-size:12px; margin-top:6px}
   .hidden{display:none}
@@ -168,9 +148,9 @@
     position:fixed; inset:0; background:rgba(15,23,42,.55);
     display:none; align-items:center; justify-content:center; z-index:50;
   }
-  .modal{background:#fff; width:min(760px,calc(100% - 24px)); border-radius:16px; box-shadow:var(--ring); padding:18px;}
+  .modal{background:#fff; width:min(760px,calc(100% - 24px)); border-radius:12px; box-shadow:var(--ring); padding:16px;}
   .modal h2{margin:0 0 10px; font-size:18px; font-weight:800}
-  .modal .body{max-height:52vh; overflow:auto; border:1px solid var(--chakra-colors-chakra-border-color); border-radius:10px; padding:12px; background:#f8fafc;}
+  .modal .body{max-height:60vh; overflow:auto; border:1px solid var(--border); border-radius:10px; padding:12px; background:#f8fafc;}
   .modal .body ol{margin:0; padding-left:20px;}
   .modal .body li{margin:6px 0;}
   .modal .actions{display:flex; justify-content:flex-end; gap:10px; margin-top:12px}
@@ -178,162 +158,187 @@
   .modal .actions .btn-primary:hover{background:var(--accent-700)}
   .modal-backdrop.show{display:flex}
 
+  /* Result stage layout */
+  #resultStage{ min-height: 100vh; display:none; flex-direction:column; gap:16px; padding:12px 0 24px; }
+  #resultStage.show{ display:flex; }
+  .fade-in{ animation: fadeIn .35s ease-in-out; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
   /* Comparison */
   .cmp-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-  .cmp-box{border:1px solid var(--chakra-colors-chakra-border-color); border-radius:12px; padding:12px; background:#fff; max-height:240px; overflow:auto;}
+  .cmp-box{border:1px solid var(--border); border-radius:10px; padding:12px; background:#fff; max-height:260px; overflow:auto;}
   .w{padding:1px 2px; border-radius:3px}
-  .w.ok{color:#6b7280}
-  .w.err{color:#fff; background:#ef4444}
-  .w.miss{color:#111827; background:#fbbf24}
-  .w.extra{color:#fff; background:#ef4444}
+  .w.ok{color:#374151; background:#e5e7eb}
+  .w.sub{color:#fff; background:#ef4444}   /* substitution/mismatch */
+  .w.del{color:#111827; background:#fbbf24} /* missing word in typed */
+  .w.ins{color:#fff; background:#ef4444}   /* extra word in typed */
   .legend{display:flex; gap:10px; flex-wrap:wrap; font-size:12px; color:#6b7280}
   .legend .sw{display:inline-flex; align-items:center; gap:6px}
   .sw .chip{display:inline-block; width:14px; height:14px; border-radius:3px}
   .chip.ok{background:#9ca3af}
-  .chip.err{background:#ef4444}
-  .chip.miss{background:#fbbf24}
-  .chip.extra{background:#ef4444}
+  .chip.sub{background:#ef4444}
+  .chip.del{background:#fbbf24}
+  .chip.ins{background:#ef4444}
 
-  @media (max-width:920px){.grid-3{grid-template-columns:1fr}}
+  /* Print */
+  @media print{
+    .float-timer, .controls, #typingStage, .modal-backdrop { display:none !important; }
+    #resultStage{ display:block !important; }
+    .section{ box-shadow:none; border:1px solid #ccc; }
+    body{ background:#fff; }
+  }
 </style>
 </head>
 <body>
 
-  <!-- Floating timer (keep a single #timerEl in the page) -->
+  <!-- Floating timer -->
   <div class="float-timer" aria-live="polite" role="timer">
-    <span class="label">Time left:-</span>
+    <span class="label">Time left:</span>
     <span id="timerEl">5:00</span>
   </div>
 
   <div class="page">
     <!-- Masthead -->
-    <header class="masthead">
+    <header class="masthead" aria-label="UPSSSC Typing Test">
       <div class="titlebar">
-        <div class="titletext" id="testTitle">Typing Test — UPSSSC Assistants English Typing Test</div>
+        <div class="titletext" id="testTitle">Typing Test — UPSSSC Junior Assistant</div>
       </div>
       <div class="brandbar">
-        <div class="brandleft">UPSSSC Assistants English Typing Test</div>
+        <div class="brandleft">UPSSSC Typing Module</div>
         <div class="brandright">
           <div class="userbox">
-            <img class="avatar" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="candidate photo">
+            <!-- Symbolic clipart avatar -->
+            <img class="avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="candidate avatar">
             <div class="username" id="userName">CANDIDATE</div>
           </div>
         </div>
       </div>
-      <div class="infobar">
+      <div class="infobar" aria-live="polite">
         <div>Keyboard Layout: <strong>QWERTY</strong></div>
         <div>Language: <strong id="infoLang">English</strong></div>
+        <div>Duration: <strong>5 + 5 min</strong></div>
       </div>
     </header>
 
-    <!-- Controls toolbar -->
-    <div class="controls toolbar">
-      <div class="left">
-        <span id="stageLabel" style="font-weight:800">Stage: <u>English</u> → Hindi</span>
+    <!-- ===== Typing Stage (view 1) ===== -->
+    <section id="typingStage" class="fade-in">
+      <!-- Controls toolbar -->
+      <div class="controls toolbar">
+        <div class="left">
+          <span id="stageLabel" style="font-weight:800">Stage: <u>English</u> → Hindi</span>
 
-        <label id="passageLabel" class="toolbar-label">Passage:</label>
-        <select id="passageSet" class="toolbar-select"></select>
+          <label id="passageLabel" class="toolbar-label">Passage:</label>
+          <select id="passageSet" class="toolbar-select" aria-label="Select passage set"></select>
 
-        <label id="fontLabel" class="toolbar-label hidden">Hindi Font:</label>
-        <select id="hindiFont" class="toolbar-select hidden">
-          <option value="Mangal" selected>Mangal (Inscript)</option>
-          <option value="Kruti Dev 010">Kruti Dev 010</option>
-        </select>
-      </div>
+          <label id="fontLabel" class="toolbar-label hidden">Hindi Font:</label>
+          <select id="hindiFont" class="toolbar-select hidden" aria-label="Select Hindi font">
+            <option value="Mangal" selected>Mangal (Inscript)</option>
+            <option value="Kruti Dev 010">Kruti Dev 010</option>
+          </select>
+        </div>
 
-      <div class="right">
-        <button id="startBtn" class="btn" disabled>Loading…</button>
-        <button id="submitBtn" class="btn hidden">Submit</button>
-        <button id="resetBtn" class="btn">Reset</button>
-      </div>
-    </div>
-
-    <!-- Toast -->
-    <div id="toastWrap"><div id="toast">⚠️ CTRL/CMD or Paste not allowed</div></div>
-
-    <!-- Reference Text -->
-    <section class="section">
-      <h3>Reference Text</h3>
-      <div id="textDisplay" class="scroll">Select a passage and click “Start”.</div>
-    </section>
-
-    <!-- Typing Area -->
-    <section class="section">
-      <h3>Your Typing Area</h3>
-      <div class="inputbox" id="inputWrapper">
-        <textarea id="inputArea" placeholder="Start typing here..." disabled
-          autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false"
-          style="width:100%; height:160px; border:1px solid #e5e7eb; border-radius:12px; padding:12px; background:#fff; font-size:14px; line-height:1.6;"></textarea>
-      </div>
-      <small class="note">Backspace/Delete/Cut are limited to the <b>current word and the immediate previous word</b>.</small>
-    </section>
-
-    <!-- Results -->
-    <section class="section">
-      <h3>Test Results</h3>
-
-      <div id="bothResults" class="hidden">
-        <div class="grid-3">
-          <!-- EN Panel -->
-          <div class="stat">
-            <small>ENGLISH</small>
-            <div class="value" id="badgeEN" style="margin-bottom:8px;">EN: —</div>
-            <div class="grid" style="gap:8px">
-              <div class="stat"><small>Total Keystrokes</small><div id="enKeys" class="value">0</div></div>
-              <div class="stat"><small>Total Words</small><div id="enWords" class="value">0</div></div>
-              <div class="stat"><small>Total Wrong Words</small><div id="enWrong" class="value">0</div></div>
-              <div class="stat"><small>Penalty Words</small><div id="enPenalty" class="value" style="color:var(--warning)">0</div></div>
-              <div class="stat"><small>Net Typing Speed</small><div id="enNet" class="value">0.00<span class="u"> WPM</span></div></div>
-            </div>
-            <div id="enNote" class="mini-note hidden"></div>
-          </div>
-
-          <!-- HI Panel -->
-          <div class="stat">
-            <small>HINDI</small>
-            <div class="value" id="badgeHI" style="margin-bottom:8px;">HI: —</div>
-            <div class="grid" style="gap:8px">
-              <div class="stat"><small>Total Keystrokes</small><div id="hiKeys" class="value">0</div></div>
-              <div class="stat"><small>Total Words</small><div id="hiWords" class="value">0</div></div>
-              <div class="stat"><small>Total Wrong Words</small><div id="hiWrong" class="value">0</div></div>
-              <div class="stat"><small>Penalty Words</small><div id="hiPenalty" class="value" style="color:var(--warning)">0</div></div>
-              <div class="stat"><small>Net Typing Speed</small><div id="hiNet" class="value">0.00<span class="u"> WPM</span></div></div>
-            </div>
-            <div id="hiNote" class="mini-note hidden"></div>
-          </div>
-
-          <!-- Overall -->
-          <div class="stat">
-            <small>OVERALL</small>
-            <div id="badgeOverall" class="value pill-fail" style="display:inline-block; padding:8px 14px; border-radius:10px; margin-top:8px;">OVERALL: —</div>
-            <p class="note" style="margin-top:10px">Both languages must meet minimum word count and net WPM.</p>
-          </div>
+        <div class="right">
+          <button id="startBtn" class="btn" disabled>Loading…</button>
+          <button id="submitBtn" class="btn hidden">Submit</button>
+          <button id="resetBtn" class="btn">Reset</button>
         </div>
       </div>
 
-      <div id="preResultsNote" class="note">Results appear after <b>both</b> English and Hindi are submitted.</div>
+      <!-- Toast -->
+      <div id="toastWrap" role="status" aria-live="polite"><div id="toast">⚠️ CTRL/CMD or Paste not allowed</div></div>
+
+      <!-- Reference Text -->
+      <section class="section">
+        <h3>Reference Text</h3>
+        <div id="textDisplay" class="scroll">Select a passage and click “Start”.</div>
+      </section>
+
+      <!-- Typing Area -->
+      <section class="section">
+        <h3>Your Typing Area</h3>
+        <div class="inputbox" id="inputWrapper">
+          <textarea id="inputArea" placeholder="Start typing here..." disabled
+            autocorrect="off" autocomplete="off" autocapitalize="off" spellcheck="false"
+            style="width:100%; height:160px; border:1px solid #e5e7eb; border-radius:10px; padding:12px; background:#fff; font-size:14px; line-height:1.6;"></textarea>
+        </div>
+        <small class="note">Backspace/Delete/Cut are limited to the <b>current word and the immediate previous word</b>.</small>
+      </section>
     </section>
 
-    <!-- Comparison -->
-    <section id="comparisonSection" class="section hidden">
-      <h3>Detailed Comparison</h3>
-      <div class="legend" style="margin-bottom:10px">
-        <span class="sw"><span class="chip ok"></span> Correct</span>
-        <span class="sw"><span class="chip err"></span> Mismatch / Extra</span>
-        <span class="sw"><span class="chip miss"></span> Missing (placeholder)</span>
-      </div>
+    <!-- ===== Result Stage (view 2) ===== -->
+    <section id="resultStage" class="fade-in">
+      <section class="section">
+        <h3>Test Results</h3>
+        <div id="bothResults" class="hidden">
+          <div class="grid">
+            <!-- EN Panel -->
+            <div class="stat">
+              <small>ENGLISH</small>
+              <div class="value" id="badgeEN" style="margin:6px 0 10px;">EN: —</div>
+              <div class="grid" style="gap:8px">
+                <div class="stat"><small>Total Keystrokes</small><div id="enKeys" class="value">0</div></div>
+                <div class="stat"><small>Total Words</small><div id="enWords" class="value">0</div></div>
+                <div class="stat"><small>Total Wrong Words</small><div id="enWrong" class="value">0</div></div>
+                <div class="stat"><small>Penalty Words</small><div id="enPenalty" class="value" style="color:var(--warning)">0</div></div>
+                <div class="stat"><small>Net Typing Speed</small><div id="enNet" class="value">0.00<span class="u"> WPM</span></div></div>
+              </div>
+              <div id="enNote" class="mini-note hidden"></div>
+            </div>
 
-      <h4 style="margin:10px 0 8px; font-weight:800">English</h4>
-      <div class="cmp-grid" style="margin-bottom:14px">
-        <div class="cmp-box"><small class="note">Reference</small><div id="cmpENRef" style="margin-top:6px"></div></div>
-        <div class="cmp-box"><small class="note">Typed</small><div id="cmpENTyped" style="margin-top:6px"></div></div>
-      </div>
+            <!-- HI Panel -->
+            <div class="stat">
+              <small>HINDI</small>
+              <div class="value" id="badgeHI" style="margin:6px 0 10px;">HI: —</div>
+              <div class="grid" style="gap:8px">
+                <div class="stat"><small>Total Keystrokes</small><div id="hiKeys" class="value">0</div></div>
+                <div class="stat"><small>Total Words</small><div id="hiWords" class="value">0</div></div>
+                <div class="stat"><small>Total Wrong Words</small><div id="hiWrong" class="value">0</div></div>
+                <div class="stat"><small>Penalty Words</small><div id="hiPenalty" class="value" style="color:var(--warning)">0</div></div>
+                <div class="stat"><small>Net Typing Speed</small><div id="hiNet" class="value">0.00<span class="u"> WPM</span></div></div>
+              </div>
+              <div id="hiNote" class="mini-note hidden"></div>
+            </div>
+          </div>
 
-      <h4 style="margin:10px 0 8px; font-weight:800">Hindi</h4>
-      <div class="cmp-grid">
-        <div class="cmp-box"><small class="note">Reference</small><div id="cmpHIRef" style="margin-top:6px"></div></div>
-        <div class="cmp-box"><small class="note">Typed</small><div id="cmpHITyped" style="margin-top:6px"></div></div>
-      </div>
+          <!-- Overall -->
+          <div class="stat" style="margin-top:12px">
+            <small>OVERALL</small>
+            <div id="badgeOverall" class="pill-fail" style="margin-top:8px;">OVERALL: —</div>
+            <p class="note" style="margin-top:10px">
+              Pass requires: English ≥ 150 words & Net ≥ 30 WPM; Hindi ≥ 125 words & Net ≥ 25 WPM.
+            </p>
+            <div style="margin-top:8px">
+              <button id="printBtn" class="btn" title="Print / Save as PDF">Print Result</button>
+              <button id="retakeBtn" class="btn" title="Restart the test">Retake Test</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="preResultsNote" class="note">Results appear after <b>both</b> English and Hindi are submitted.</div>
+      </section>
+
+      <!-- Comparison -->
+      <section id="comparisonSection" class="section hidden">
+        <h3>Detailed Comparison</h3>
+        <div class="legend" style="margin-bottom:10px">
+          <span class="sw"><span class="chip ok"></span> Correct</span>
+          <span class="sw"><span class="chip sub"></span> Substitution / mismatch</span>
+          <span class="sw"><span class="chip del"></span> Missing (in typed)</span>
+          <span class="sw"><span class="chip ins"></span> Extra (in typed)</span>
+        </div>
+
+        <h4 style="margin:10px 0 8px; font-weight:800">English</h4>
+        <div class="grid">
+          <div class="cmp-box"><small class="note">Reference</small><div id="cmpENRef" style="margin-top:6px"></div></div>
+          <div class="cmp-box"><small class="note">Typed</small><div id="cmpENTyped" style="margin-top:6px"></div></div>
+        </div>
+
+        <h4 style="margin:14px 0 8px; font-weight:800">Hindi</h4>
+        <div class="grid">
+          <div class="cmp-box"><small class="note">Reference</small><div id="cmpHIRef" style="margin-top:6px"></div></div>
+          <div class="cmp-box"><small class="note">Typed</small><div id="cmpHITyped" style="margin-top:6px"></div></div>
+        </div>
+      </section>
     </section>
   </div>
 
@@ -353,52 +358,65 @@
 document.addEventListener('DOMContentLoaded', function(){
   /* ===== Elements ===== */
   const els = {
-    stageLabel: document.getElementById('stageLabel'),
+    // stage views
+    typingStage: document.getElementById('typingStage'),
+    resultStage: document.getElementById('resultStage'),
+
+    // header info
+    infoLang: document.getElementById('infoLang'),
+
+    // typing controls
     textDisplay: document.getElementById('textDisplay'),
     inputArea:  document.getElementById('inputArea'),
     startBtn:   document.getElementById('startBtn'),
     submitBtn:  document.getElementById('submitBtn'),
     resetBtn:   document.getElementById('resetBtn'),
     timerEl:    document.getElementById('timerEl'),
-    bothResults:document.getElementById('bothResults'),
-    preResultsNote: document.getElementById('preResultsNote'),
-    badgeEN:    document.getElementById('badgeEN'),
-    badgeHI:    document.getElementById('badgeHI'),
-    badgeOverall: document.getElementById('badgeOverall'),
+    stageLabel: document.getElementById('stageLabel'),
     passageSet: document.getElementById('passageSet'),
     hindiFont:  document.getElementById('hindiFont'),
     fontLabel:  document.getElementById('fontLabel'),
+
+    // toast
     toastWrap:  document.getElementById('toastWrap'),
     toast:      document.getElementById('toast'),
+
+    // instructions
     instrBackdrop: document.getElementById('instrBackdrop'),
     instrBody: document.getElementById('instrBody'),
     instrOk: document.getElementById('instrOk'),
     instrCancel: document.getElementById('instrCancel'),
 
+    // results
+    bothResults: document.getElementById('bothResults'),
+    preResultsNote: document.getElementById('preResultsNote'),
+    badgeEN: document.getElementById('badgeEN'),
+    badgeHI: document.getElementById('badgeHI'),
+    badgeOverall: document.getElementById('badgeOverall'),
     enKeys: document.getElementById('enKeys'),
     enWords: document.getElementById('enWords'),
     enWrong: document.getElementById('enWrong'),
     enPenalty: document.getElementById('enPenalty'),
     enNet: document.getElementById('enNet'),
     enNote: document.getElementById('enNote'),
-
     hiKeys: document.getElementById('hiKeys'),
     hiWords: document.getElementById('hiWords'),
     hiWrong: document.getElementById('hiWrong'),
     hiPenalty: document.getElementById('hiPenalty'),
     hiNet: document.getElementById('hiNet'),
     hiNote: document.getElementById('hiNote'),
+    printBtn: document.getElementById('printBtn'),
+    retakeBtn: document.getElementById('retakeBtn'),
 
-    infoLang: document.getElementById('infoLang'),
-
+    // comparisons
+    comparisonSection: document.getElementById('comparisonSection'),
     cmpENRef: document.getElementById('cmpENRef'),
     cmpENTyped: document.getElementById('cmpENTyped'),
     cmpHIRef: document.getElementById('cmpHIRef'),
     cmpHITyped: document.getElementById('cmpHITyped'),
-    comparisonSection: document.getElementById('comparisonSection'),
   };
 
-  /* ===== Instruction HTML (exact text provided) ===== */
+  /* ===== Instructions (exact text) ===== */
   const INSTRUCTIONS_HTML = `
     <ol>
       <li>The candidates will be provided with the master text passage of about 1500 key depressions in English.</li>
@@ -417,12 +435,12 @@ document.addEventListener('DOMContentLoaded', function(){
 
   /* ===== State ===== */
   let intervalId = null;
-  let timeLeft = 300;
+  let timeLeft = 300; // seconds
   let started = false;
   let stage = 'EN';       // 'EN' -> 'HI'
   let passage = '';
   let startedAt = null;
-  let results = { EN:null, HI:null }; // will store metrics + comparison HTML
+  let results = { EN:null, HI:null }; // stores metrics + LCS comparison
   let instructionsShownOnce = false;
 
   let passageSets = [];
@@ -439,6 +457,7 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   /* ===== Helpers ===== */
+  const debounce = (fn, ms=80)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; };
   function wordsOf(text){ return text && text.trim().length ? text.trim().split(/\s+/) : []; }
   function setPassage(text){
     const words = text.split(/\s+/);
@@ -446,12 +465,12 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   function setFonts(){
     if (stage === 'HI'){
-      const f = (els.hindiFont.value || 'Mangal') + ", Inter, system-ui";
+      const f = (els.hindiFont.value || 'Mangal') + ", Inter, system-ui, sans-serif";
       els.textDisplay.style.fontFamily = f;
       els.inputArea.style.fontFamily   = f;
     } else {
-      els.textDisplay.style.fontFamily = 'Inter, system-ui';
-      els.inputArea.style.fontFamily   = 'Inter, system-ui';
+      els.textDisplay.style.fontFamily = 'Inter, system-ui, sans-serif';
+      els.inputArea.style.fontFamily   = 'Inter, system-ui, sans-serif';
     }
   }
   function applySet(id){
@@ -474,13 +493,23 @@ document.addEventListener('DOMContentLoaded', function(){
   function refreshInfoBar(){
     els.infoLang.textContent = (stage === 'HI') ? 'Hindi' : 'English';
   }
+  function swapToResultPage(){
+    els.typingStage.style.display = 'none';
+    els.resultStage.classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function swapToTypingPage(){
+    els.resultStage.classList.remove('show');
+    els.typingStage.style.display = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   function resetAll(){
     if (intervalId) { clearInterval(intervalId); intervalId=null; }
     timeLeft=300; started=false; stage='EN'; results.EN=results.HI=null;
     els.timerEl.textContent='5:00';
     els.textDisplay.textContent='Select a passage and click “Start”.';
     els.inputArea.value=''; els.inputArea.disabled=true; els.submitBtn.classList.add('hidden');
-    els.bothResults.classList.add('hidden'); els.preResultsNote.classList.remove('hidden');
     els.startBtn.textContent='Start English';
     els.stageLabel.innerHTML='Stage: <u>English</u> → Hindi';
     refreshInfoBar();
@@ -492,13 +521,11 @@ document.addEventListener('DOMContentLoaded', function(){
     lockIdx = -1; prevLockIdx = -1; lastVal = '';
     snapshotTextarea();
 
-    // clear badges & numbers
-    els.badgeEN.className = 'value';
-    els.badgeEN.textContent = 'EN: —';
-    els.badgeHI.className = 'value';
-    els.badgeHI.textContent = 'HI: —';
-    els.badgeOverall.className = 'value pill-fail';
-    els.badgeOverall.textContent = 'OVERALL: —';
+    // reset results UI
+    els.bothResults.classList.add('hidden'); els.preResultsNote.classList.remove('hidden');
+    els.badgeEN.className = 'value'; els.badgeEN.textContent = 'EN: —';
+    els.badgeHI.className = 'value'; els.badgeHI.textContent = 'HI: —';
+    els.badgeOverall.className = 'pill-fail'; els.badgeOverall.textContent = 'OVERALL: —';
     ['enKeys','enWords','enWrong','enPenalty','hiKeys','hiWords','hiWrong','hiPenalty']
       .forEach(id => els[id].textContent = '0');
     els.enNet.innerHTML = '0.00<span class="u"> WPM</span>';
@@ -508,9 +535,12 @@ document.addEventListener('DOMContentLoaded', function(){
     els.comparisonSection.classList.add('hidden');
     els.cmpENRef.innerHTML = els.cmpENTyped.innerHTML = '';
     els.cmpHIRef.innerHTML = els.cmpHITyped.innerHTML = '';
+
+    // ensure typing page is shown
+    swapToTypingPage();
   }
 
-  /* ===== BACKSPACE LOCK: current + previous word only ===== */
+  /* ===== BACKSPACE LOCK: current + previous word only (monotonic) ===== */
   function computeLockIndex(val){
     const spaces = [];
     for (let i = 0; i < val.length; i++){
@@ -549,7 +579,7 @@ document.addEventListener('DOMContentLoaded', function(){
   function actuallyStartStage(){
     started = true; timeLeft=300; startedAt=Date.now(); els.timerEl.textContent='5:00';
     els.inputArea.value=''; els.inputArea.disabled=false; els.inputArea.focus();
-    els.submitBtn.classList.remove('hidden'); els.preResultsNote.classList.remove('hidden');
+    els.submitBtn.classList.remove('hidden');
     setButtonsRunning(true);
 
     if (stage === 'EN'){
@@ -563,7 +593,7 @@ document.addEventListener('DOMContentLoaded', function(){
       els.startBtn.textContent='Running…';
       els.fontLabel.classList.remove('hidden'); els.hindiFont.classList.remove('hidden');
     }
-    setPassage(passage); setFonts(); highlightProgress();
+    setPassage(passage); setFonts(); debouncedHighlight();
     refreshInfoBar();
 
     lockIdx = -1; prevLockIdx = -1; lastVal = '';
@@ -601,19 +631,18 @@ document.addEventListener('DOMContentLoaded', function(){
     setButtonsRunning(false);
 
     if (stage==='EN'){
-      // Do NOT show results yet; wait for Hindi to complete
-      let prep=8; els.textDisplay.innerHTML='Hindi starts in <b>'+prep+'</b> seconds… Select font above if needed.';
+      // Wait to show results until Hindi completes
+      let prep=8; els.textDisplay.innerHTML='Hindi starts in <b>'+prep+'</b> seconds… Select font if needed.';
       const prepInt=setInterval(function(){
-        prep--; els.textDisplay.innerHTML='Hindi starts in <b>'+prep+'</b> seconds… Select font above if needed.';
+        prep--; els.textDisplay.innerHTML='Hindi starts in <b>'+prep+'</b> seconds… Select font if needed.';
         if(prep<=0){ clearInterval(prepInt); stage='HI'; els.timerEl.textContent='5:00'; els.startBtn.textContent='Start Hindi'; startStage(); }
       },1000);
     } else {
-      // Show both panels & overall now + comparisons
-      showCombinedResults();
-      els.bothResults.classList.remove('hidden');
-      els.preResultsNote.classList.add('hidden');
-      renderComparisons(); els.comparisonSection.classList.remove('hidden');
+      // After Hindi -> show result page
+      updateResultsUI();
+      renderComparisons();
       els.startBtn.textContent='Restart';
+      swapToResultPage();
     }
     started=false;
   }
@@ -622,32 +651,88 @@ document.addEventListener('DOMContentLoaded', function(){
   const MIN_WORDS_EN = 150; // 30*5
   const MIN_WORDS_HI = 125; // 25*5
 
-  function buildComparisonHTML(ref, typed){
-    const refTokens = ref.split(/\s+/);
-    const typedTokens = typed.length ? typed.trim().split(/\s+/) : [];
-    const maxLen = Math.max(refTokens.length, typedTokens.length);
+  function highlightProgress(){
+    const refWords = passage.split(/\s+/);
+    const typedWords = wordsOf(els.inputArea.value);
+    const spans = els.textDisplay.querySelectorAll('span');
+
+    for (let i=0;i<spans.length;i++){
+      const span = spans[i]; span.classList.remove('ok','err','cur');
+      const tw = typedWords[i]; if (tw==null) continue;
+      if (tw === refWords[i]) span.classList.add('ok'); else span.classList.add('err');
+    }
+    const curIndex = Math.max(0, typedWords.length - 1);
+    const curSpan = spans[curIndex]; if (curSpan){ curSpan.classList.add('cur'); curSpan.scrollIntoView({block:'nearest', inline:'nearest'}); }
+  }
+  const debouncedHighlight = debounce(highlightProgress, 80);
+
+  /* Word-level LCS diff for better alignment (used on submit only) */
+  function lcsAlign(refArr, typedArr){
+    const m = refArr.length, n = typedArr.length;
+    const dp = Array.from({length:m+1}, ()=> Array(n+1).fill(0));
+    for (let i=1;i<=m;i++){
+      for (let j=1;j<=n;j++){
+        if (refArr[i-1] === typedArr[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+        else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+      }
+    }
+    // backtrack
+    const aligned = [];
+    let i=m, j=n;
+    while(i>0 && j>0){
+      if (refArr[i-1] === typedArr[j-1]){
+        aligned.push({ type:'ok', ref:refArr[i-1], typed:typedArr[j-1] });
+        i--; j--;
+      } else if (dp[i-1][j] >= dp[i][j-1]){
+        aligned.push({ type:'del', ref:refArr[i-1], typed:null });
+        i--;
+      } else {
+        aligned.push({ type:'ins', ref:null, typed:typedArr[j-1] });
+        j--;
+      }
+    }
+    while(i>0){ aligned.push({ type:'del', ref:refArr[i-1], typed:null }); i--; }
+    while(j>0){ aligned.push({ type:'ins', ref:null, typed:typedArr[j-1] }); j--; }
+    aligned.reverse();
+
+    // Merge adjacent ins+del as substitutions when 1-1
+    const merged = [];
+    for (let k=0; k<aligned.length; k++){
+      const curr = aligned[k];
+      if (curr.type==='del' && k+1 < aligned.length && aligned[k+1].type==='ins'){
+        merged.push({ type:'sub', ref:curr.ref, typed:aligned[k+1].typed });
+        k++;
+      } else if (curr.type==='ins' && k+1 < aligned.length && aligned[k+1].type==='del'){
+        merged.push({ type:'sub', ref:aligned[k+1].ref, typed:curr.typed });
+        k++;
+      } else {
+        merged.push(curr);
+      }
+    }
+    return merged;
+  }
+
+  function buildComparisonHTML_LCS(ref, typed){
+    const refTokens = ref.trim().length ? ref.split(/\s+/) : [];
+    const typedTokens = typed.trim().length ? typed.split(/\s+/) : [];
+    const aligned = lcsAlign(refTokens, typedTokens);
+
     const refParts = [];
     const typedParts = [];
-
-    for (let i=0;i<maxLen;i++){
-      const r = refTokens[i];
-      const t = typedTokens[i];
-
-      if (r == null){ // extra typed word
-        typedParts.push(`<span class="w extra">${t}</span>`);
-        continue;
-      }
-      if (t == null){ // missing typed word
-        refParts.push(`<span class="w miss">${r}</span>`);
-        typedParts.push(`<span class="w miss">▢</span>`);
-        continue;
-      }
-      if (r === t){
-        refParts.push(`<span class="w ok">${r}</span>`);
-        typedParts.push(`<span class="w ok">${t}</span>`);
-      }else{
-        refParts.push(`<span class="w err">${r}</span>`);
-        typedParts.push(`<span class="w err">${t}</span>`);
+    for (const a of aligned){
+      if (a.type === 'ok'){
+        refParts.push(`<span class="w ok">${a.ref}</span>`);
+        typedParts.push(`<span class="w ok">${a.typed}</span>`);
+      } else if (a.type === 'sub'){
+        refParts.push(`<span class="w sub">${a.ref}</span>`);
+        typedParts.push(`<span class="w sub">${a.typed}</span>`);
+      } else if (a.type === 'del'){
+        refParts.push(`<span class="w del">${a.ref}</span>`);
+        typedParts.push(`<span class="w del">▢</span>`);
+      } else if (a.type === 'ins'){
+        // show empty on ref, extra on typed
+        // (keep ref blank to avoid noise)
+        typedParts.push(`<span class="w ins">${a.typed}</span>`);
       }
     }
     return { refHTML: refParts.join(' '), typedHTML: typedParts.join(' ') };
@@ -662,7 +747,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const typedWords = wordsOf(typedRaw);
     const spans = els.textDisplay.querySelectorAll('span');
 
-    // Visual feedback for live view
+    // live visuals for last keypress state
     for (let n=0;n<spans.length;n++){ spans[n].classList.remove('ok','err','cur'); }
     const overlap = Math.min(typedWords.length, refWords.length);
 
@@ -675,12 +760,10 @@ document.addEventListener('DOMContentLoaded', function(){
     const overTyped = Math.max(0, typedWords.length - refWords.length);
     wrong += overTyped;
 
-    // cursor
     const curIndex = Math.max(0, typedWords.length - 1);
     const curSpan = spans[curIndex];
     if (curSpan){ curSpan.classList.add('cur'); curSpan.scrollIntoView({block:'nearest', inline:'nearest'}); }
 
-    // totals
     const keystrokes = typedRaw.length;
     const totalWords = typedWords.length;
 
@@ -688,29 +771,28 @@ document.addEventListener('DOMContentLoaded', function(){
     const grace = 5;
     const penalty = Math.max(0, wrong - grace);
 
-    // Net WPM (word-count model)
-    const netWPM = Math.max(0, (totalWords - penalty)) / minutes;
+    // WPMs
+    const grossWPM = (keystrokes / 5) / minutes;          // from keystrokes (per your rule)
+    const netWPM   = Math.max(0, (totalWords - penalty)) / minutes; // displayed
 
-    // thresholds
     const minSpeed = stage === 'HI' ? 25 : 30;
     const minWords = stage === 'HI' ? MIN_WORDS_HI : MIN_WORDS_EN;
 
-    // pass/fail requires BOTH gates
     const meetsWords = totalWords >= minWords;
     const meetsSpeed = netWPM >= minSpeed;
     const passed = meetsWords && meetsSpeed;
 
-    // Build comparison HTML for this stage
-    const cmp = buildComparisonHTML(passage, typedRaw);
+    // Build LCS comparison for this stage
+    const cmp = buildComparisonHTML_LCS(passage, typedRaw);
 
-    // write fields for this stage (no reveal until both done)
+    // Fill fields (results page not shown until both complete)
     if (stage === 'EN'){
       els.enKeys.textContent = keystrokes;
       els.enWords.textContent = totalWords;
       els.enWrong.textContent = wrong;
       els.enPenalty.textContent = penalty;
       els.enNet.innerHTML = netWPM.toFixed(2) + '<span class="u"> WPM</span>';
-      els.badgeEN.className = 'value ' + (passed ? 'pill-pass' : 'pill-fail');
+      els.badgeEN.className = (passed ? 'pill-pass' : 'pill-fail');
       els.badgeEN.textContent = 'EN: ' + (passed ? 'PASS' : 'FAIL');
       if (!meetsWords){
         els.enNote.textContent = `Minimum ${minWords} words required (you typed ${totalWords}).`;
@@ -722,7 +804,7 @@ document.addEventListener('DOMContentLoaded', function(){
       els.hiWrong.textContent = wrong;
       els.hiPenalty.textContent = penalty;
       els.hiNet.innerHTML = netWPM.toFixed(2) + '<span class="u"> WPM</span>';
-      els.badgeHI.className = 'value ' + (passed ? 'pill-pass' : 'pill-fail');
+      els.badgeHI.className = (passed ? 'pill-pass' : 'pill-fail');
       els.badgeHI.textContent = 'HI: ' + (passed ? 'PASS' : 'FAIL');
       if (!meetsWords){
         els.hiNote.textContent = `Minimum ${minWords} words required (you typed ${totalWords}).`;
@@ -730,38 +812,30 @@ document.addEventListener('DOMContentLoaded', function(){
       } else { els.hiNote.classList.add('hidden'); els.hiNote.textContent=''; }
     }
 
-    return { keystrokes, words: totalWords, wrong, penalty, netWPM, passed, cmp };
+    return { keystrokes, words: totalWords, wrong, penalty, grossWPM, netWPM, passed, cmp };
+  }
+
+  function updateResultsUI(){
+    // Show results + overall (now that both are present)
+    els.bothResults.classList.remove('hidden');
+    els.preResultsNote.classList.add('hidden');
+
+    const enPass = results.EN && results.EN.passed === true;
+    const hiPass = results.HI && results.HI.passed === true;
+    els.badgeOverall.className = (enPass && hiPass ? 'pill-pass' : 'pill-fail');
+    els.badgeOverall.textContent = 'OVERALL: ' + ((enPass && hiPass) ? 'PASS' : 'FAIL');
   }
 
   function renderComparisons(){
     if (results.EN){
-      els.cmpENRef.innerHTML = results.EN.cmp.refHTML;
-      els.cmpENTyped.innerHTML = results.EN.cmp.typedHTML;
+      els.cmpENRef.innerHTML = results.EN.cmp.refHTML || '';
+      els.cmpENTyped.innerHTML = results.EN.cmp.typedHTML || '';
     }
     if (results.HI){
-      els.cmpHIRef.innerHTML = results.HI.cmp.refHTML;
-      els.cmpHITyped.innerHTML = results.HI.cmp.typedHTML;
+      els.cmpHIRef.innerHTML = results.HI.cmp.refHTML || '';
+      els.cmpHITyped.innerHTML = results.HI.cmp.typedHTML || '';
     }
-  }
-
-  function showCombinedResults(){
-    const enPass = results.EN && results.EN.passed === true;
-    const hiPass = results.HI && results.HI.passed === true;
-    els.badgeOverall.className = 'value ' + (enPass && hiPass ? 'pill-pass' : 'pill-fail');
-    els.badgeOverall.textContent = 'OVERALL: ' + ((enPass && hiPass) ? 'PASS' : 'FAIL');
-  }
-
-  function highlightProgress(){
-    const refWords = passage.split(/\s+/);
-    const typedWords = wordsOf(els.inputArea.value);
-    const spans = els.textDisplay.querySelectorAll('span');
-    for (let i=0;i<spans.length;i++){
-      const span = spans[i]; span.classList.remove('ok','err','cur');
-      const tw = typedWords[i]; if (tw==null) continue;
-      if (tw === refWords[i]) span.classList.add('ok'); else span.classList.add('err');
-    }
-    const curIndex = Math.max(0, typedWords.length - 1);
-    const curSpan = spans[curIndex]; if (curSpan){ curSpan.classList.add('cur'); curSpan.scrollIntoView({block:'nearest', inline:'nearest'}); }
+    els.comparisonSection.classList.remove('hidden');
   }
 
   /* ===== Global guards ===== */
@@ -790,7 +864,7 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   }
 
-  /* ===== Primary: beforeinput (respect lock) ===== */
+  /* ===== Primary: beforeinput ===== */
   els.inputArea.addEventListener('beforeinput', function(e){
     if (!started) return;
 
@@ -810,12 +884,12 @@ document.addEventListener('DOMContentLoaded', function(){
 
     let s = e.target.selectionStart;
     let ed = e.target.selectionEnd;
-    let aStart = s, aEnd = ed;
 
     if (t === 'insertText' || t === 'insertCompositionText'){
       if (s !== ed && Math.min(s, ed) <= prevLockIdx){ e.preventDefault(); return; }
       if (s === ed && s <= prevLockIdx){ e.preventDefault(); return; }
     } else if (deletionTypes.has(t)){
+      let aStart = s, aEnd = ed;
       if (s === ed){
         if (t === 'deleteContentBackward'){ aStart = s - 1; aEnd = s; }
         else if (t === 'deleteContentForward'){ aStart = s; aEnd = s + 1; }
@@ -890,7 +964,7 @@ document.addEventListener('DOMContentLoaded', function(){
       return;
     }
 
-    highlightProgress();
+    debouncedHighlight();
     lockIdx = nextLockIndex(newVal, lockIdx);
     snapshotTextarea();
   });
@@ -922,7 +996,11 @@ document.addEventListener('DOMContentLoaded', function(){
   els.hindiFont.addEventListener('change', setFonts);
   els.passageSet.addEventListener('change', function(){ if (started) return; applySet(els.passageSet.value); });
 
-  /* ===== Load passages.json ===== */
+  // Result page actions
+  els.printBtn.addEventListener('click', ()=> window.print());
+  els.retakeBtn.addEventListener('click', resetAll);
+
+  /* ===== Load passages.json (optional) ===== */
   async function loadPassages(){
     try{
       const res = await fetch('./passages.json?ts=' + Date.now(), { cache: 'no-store' });
@@ -961,31 +1039,6 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   }
 
-  // ===== Smart-sticky header behavior =====
-  (function(){
-    const header = document.querySelector('.masthead');
-    if (!header) return;
-    let lastY = window.pageYOffset || 0;
-
-    const onScroll = () => {
-      const y = window.pageYOffset || 0;
-      const goingDown = y > lastY;
-
-      if (y > 80) header.classList.add('masthead--compact');
-      else header.classList.remove('masthead--compact');
-
-      if (goingDown && y > 120) header.classList.add('masthead--hidden');
-      else if (!goingDown) header.classList.remove('masthead--hidden');
-
-      lastY = y;
-    };
-
-    const revealOnFocus = () => header.classList.remove('masthead--hidden');
-
-    window.addEventListener('scroll', onScroll, { passive:true });
-    document.addEventListener('focusin', revealOnFocus);
-  })();
-
   // Init
   resetAll();
   loadPassages();
@@ -993,4 +1046,5 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 </body>
 </html>
+
 
