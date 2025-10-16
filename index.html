@@ -42,8 +42,16 @@
   /* Full-width layout */
   .page{ width:100vw; max-width:none; margin:0; padding:10px 16px; }
 
-  /* ===== Masthead (screenshot style) ===== */
-  .masthead { box-shadow: var(--ring); border-radius: 8px; overflow: hidden; position:sticky; top:0; z-index:500; }
+  /* ===== Masthead (smart-sticky) ===== */
+  .masthead{
+    position: sticky;
+    top: 0;
+    z-index: 500;
+    box-shadow: var(--ring);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
   .titlebar{ background: var(--ups-blue); color:#fff; padding: 10px 18px; text-align:center; }
   .titlebar .titletext{ font-size:22px; font-weight:800; letter-spacing:.2px; }
   .brandbar{ display:flex; align-items:center; justify-content:space-between; background:var(--ups-black); color:#fff; padding:8px 12px; }
@@ -53,6 +61,16 @@
   .avatar{ width:56px; height:56px; border-radius:4px; border:1px solid rgba(255,255,255,.35); background:#fff; object-fit:cover; }
   .username{ font-weight:900; letter-spacing:.4px; }
   .infobar{ background:var(--ups-blue); color:#fff; display:flex; gap:42px; padding:10px 18px; font-size:18px; font-weight:700; }
+
+  /* compact + hide on scroll */
+  .masthead--compact .titlebar{ padding:6px 12px; }
+  .masthead--compact .titletext{ font-size:18px; }
+  .masthead--compact .brandbar{ padding:4px 10px; }
+  .masthead--compact .infobar{ padding:6px 12px; font-size:14px; gap:22px; }
+  .masthead--hidden{
+    transform: translateY(calc(-100% - 8px));
+    box-shadow: none;
+  }
 
   /* Floating timer bubble (single #timerEl lives here) */
   .float-timer{
@@ -907,6 +925,31 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   }
 
+  // ===== Smart-sticky header behavior =====
+  (function(){
+    const header = document.querySelector('.masthead');
+    if (!header) return;
+    let lastY = window.pageYOffset || 0;
+
+    const onScroll = () => {
+      const y = window.pageYOffset || 0;
+      const goingDown = y > lastY;
+
+      if (y > 80) header.classList.add('masthead--compact');
+      else header.classList.remove('masthead--compact');
+
+      if (goingDown && y > 120) header.classList.add('masthead--hidden');
+      else if (!goingDown) header.classList.remove('masthead--hidden');
+
+      lastY = y;
+    };
+
+    const revealOnFocus = () => header.classList.remove('masthead--hidden');
+
+    window.addEventListener('scroll', onScroll, { passive:true });
+    document.addEventListener('focusin', revealOnFocus);
+  })();
+
   // Init
   resetAll();
   loadPassages();
@@ -914,3 +957,4 @@ document.addEventListener('DOMContentLoaded', function(){
 </script>
 </body>
 </html>
+
